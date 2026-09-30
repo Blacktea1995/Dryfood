@@ -1,0 +1,22 @@
+# Backend - Maven
+backend/target/
+backend/data/
+backend/mvnw-dl/
+*.class
+
+# Frontend - Node
+frontend/node_modules/
+frontend/dist/
+frontend/*.log
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
