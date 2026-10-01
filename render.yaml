@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: dryfood-backend
+    runtime: docker
+    repo: https://github.com/Blacktea1995/Dryfood
+    rootDir: backend
+    dockerfilePath: Dockerfile
+    plan: free
+    healthCheckPath: /api/products
