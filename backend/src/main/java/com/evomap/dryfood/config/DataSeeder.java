@@ -50,18 +50,21 @@ public class DataSeeder implements CommandLineRunner {
         }
 
         List<Product> products = List.of(
-                new Product("Mi goi Hao Hao", "DF-001", "Mi an lien", "goi", 4500.0, 120, "Mi goi huong vit, goi 75g", "/images/mi-hao-hao.jpg"),
-                new Product("Mi goi Omachi", "DF-002", "Mi an lien", "goi", 8000.0, 90, "Mi bo bap cai Omachi 72g", "/images/mi-omachi.jpg"),
-                new Product("Ga tao trang", "DF-003", "Do kho", "goi", 35000.0, 40, "Ga tao trang loai 1, goi 500g", "/images/ga-tao.jpg"),
-                new Product("Mo kho", "DF-004", "Do kho", "goi", 42000.0, 25, "Mo kho ca sa, goi 500g", "/images/mo-kho.jpg"),
-                new Product("Ca kho tho", "DF-005", "Do kho", "hop", 55000.0, 15, "Ca kho tho dong hop 200g", "/images/ca-kho.jpg"),
-                new Product("Cha bong ca thu", "DF-006", "Do kho", "goi", 48000.0, 8, "Cha bong ca thu nguyen chat 100g", "/images/cha-bong.jpg"),
-                new Product("Ruoc toi", "DF-007", "Do kho", "hop", 38000.0, 12, "Ruoc toi heo 250g", "/images/ruoc.jpg"),
-                new Product("Nem chua ran", "DF-008", "Do kho", "goi", 25000.0, 60, "Nem chua ran dong goi 200g", "/images/nem-chua-ran.jpg"),
-                new Product("Bong bia kho", "DF-009", "Do kho", "goi", 28000.0, 6, "Bong bia kho gion 200g", "/images/bong-bia.jpg"),
-                new Product("Hat dieu rang muoi", "DF-010", "Hat - muc", "goi", 95000.0, 30, "Hat dieu rang muoi loai 1, 300g", "/images/hat-dieu.jpg"),
-                new Product("Hat bi xanh", "DF-011", "Hat - muc", "goi", 120000.0, 5, "Hat bi xanh tay 250g", "/images/hat-bi.jpg"),
-                new Product("Trai cay kho hop", "DF-012", "Trai cay kho", "hop", 65000.0, 20, "Xoai, mit, chuoi kho 400g", "/images/trai-cay-kho.jpg")
+                new Product("Mi goi Hao Hao", "DF-001", "Mi - bun", "goi", 4500.0, 120, "Mi goi huong vit, goi 75g", "/images/mi-hao-hao.jpg"),
+                new Product("Mi goi Omachi", "DF-002", "Mi - bun", "goi", 8000.0, 90, "Mi bo bap cai Omachi 72g", "/images/mi-omachi.jpg"),
+                new Product("Ga tao trang", "DF-003", "Thit", "goi", 35000.0, 40, "Ga tao trang loai 1, goi 500g", "/images/ga-tao.jpg"),
+                new Product("Mo kho", "DF-004", "Thit", "goi", 42000.0, 25, "Mo kho ca sa, goi 500g", "/images/mo-kho.jpg"),
+                new Product("Ca kho tho", "DF-005", "Hai san", "hop", 55000.0, 15, "Ca kho tho dong hop 200g", "/images/ca-kho.jpg"),
+                new Product("Cha bong ca thu", "DF-006", "Hai san", "goi", 48000.0, 8, "Cha bong ca thu nguyen chat 100g", "/images/cha-bong.jpg"),
+                new Product("Ruoc toi", "DF-007", "Thit", "hop", 38000.0, 12, "Ruoc toi heo 250g", "/images/ruoc.jpg"),
+                new Product("Nem chua ran", "DF-008", "Thit", "goi", 25000.0, 60, "Nem chua ran dong goi 200g", "/images/nem-chua-ran.jpg"),
+                new Product("Bong bia kho", "DF-009", "Hat - an vat", "goi", 28000.0, 6, "Bong bia kho gion 200g", "/images/bong-bia.jpg"),
+                new Product("Hat dieu rang muoi", "DF-010", "Hat - an vat", "goi", 95000.0, 30, "Hat dieu rang muoi loai 1, 300g", "/images/hat-dieu.jpg"),
+                new Product("Hat bi xanh", "DF-011", "Hat - an vat", "goi", 120000.0, 5, "Hat bi xanh tay 250g", "/images/hat-bi.jpg"),
+                new Product("Trai cay kho hop", "DF-012", "Trai cay kho", "hop", 65000.0, 20, "Xoai, mit, chuoi kho 400g", "/images/trai-cay-kho.jpg"),
+                new Product("Rau cu say", "DF-013", "Rau cu", "goi", 45000.0, 18, "Rau cu say hon hop 200g", "/images/rau-cu.jpg"),
+                new Product("Khoai lang vang", "DF-014", "Rau cu", "goi", 32000.0, 40, "Khoai lang vang say, goi 250g", "/images/khoai-lang.jpg"),
+                new Product("Muc kho", "DF-015", "Hai san", "goi", 145000.0, 10, "Muc kho nguyen con 250g", "/images/muc-kho.jpg")
         );
         productRepository.saveAll(products);
 

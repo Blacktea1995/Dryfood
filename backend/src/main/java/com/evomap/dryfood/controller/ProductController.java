@@ -2,6 +2,7 @@ package com.evomap.dryfood.controller;
 
 import com.evomap.dryfood.model.Product;
 import com.evomap.dryfood.service.ProductService;
+import com.evomap.dryfood.service.ReviewService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +16,32 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final ReviewService reviewService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ReviewService reviewService) {
         this.productService = productService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping
-    public List<Product> list(@RequestParam(required = false) String q) {
-        return productService.search(q);
+    public Object list(@RequestParam(required = false) String q,
+                       @RequestParam(required = false) String category,
+                       @RequestParam(required = false) String sort,
+                       @RequestParam(required = false, defaultValue = "asc") String order,
+                       @RequestParam(required = false) Integer page,
+                       @RequestParam(required = false) Integer size) {
+        Object result = productService.search(q, category, sort, order, page, size);
+        if (result instanceof ProductService.PageProducts pg) {
+            reviewService.populateRatings(pg.items());
+            return pg;
+        }
+        reviewService.populateRatings((List<Product>) result);
+        return result;
+    }
+
+    @GetMapping("/categories")
+    public List<String> categories() {
+        return productService.categories();
     }
 
     @GetMapping("/low-stock")
@@ -32,7 +51,9 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public Product get(@PathVariable Long id) {
-        return productService.findById(id);
+        Product product = productService.findById(id);
+        reviewService.populateRating(product);
+        return product;
     }
 
     @PostMapping

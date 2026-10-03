@@ -17,6 +17,11 @@ public class Order {
         PENDING, CONFIRMED, SHIPPING, DELIVERED, CANCELLED
     }
 
+    public enum PaymentMethod {
+        COD,        // Giao hang thu tien
+        TRANSFER    // Chuyen khoan
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,6 +48,18 @@ public class Order {
 
     @Column(length = 255)
     private String note;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private PaymentMethod paymentMethod = PaymentMethod.COD;
+
+    /** So tien da giam bang voucher (hoac 0). */
+    @Column(nullable = false)
+    private Double discountAmount = 0.0;
+
+    /** Ap dung voucher (neu co). */
+    @Column(length = 40)
+    private String voucherCode;
 
     public Order() {
     }
@@ -126,5 +143,29 @@ public class Order {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public Double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(Double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public String getVoucherCode() {
+        return voucherCode;
+    }
+
+    public void setVoucherCode(String voucherCode) {
+        this.voucherCode = voucherCode;
     }
 }

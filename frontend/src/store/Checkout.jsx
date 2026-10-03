@@ -12,9 +12,14 @@ export default function Checkout() {
   const [phone, setPhone] = useState(user?.phone || '');
   const [address, setAddress] = useState(user?.address || '');
   const [note, setNote] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('COD');
+  const [voucherCode, setVoucherCode] = useState('');
+  const [appliedVoucher, setAppliedVoucher] = useState(null); // {code, discount}
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [placed, setPlaced] = useState(null); // don da dat thanh cong
+
+  const finalTotal = appliedVoucher ? Math.max(0, total - appliedVoucher.discount) : total;
 
   if (placed) {
     return (
@@ -66,8 +71,10 @@ export default function Checkout() {
     try {
       const body = {
         note: note || null,
+        paymentMethod,
         items: items.map(i => ({ productId: i.productId, quantity: i.quantity }))
       };
+      if (appliedVoucher) body.voucherCode = appliedVoucher.code;
       const order = await api.createOrder(body);
       clearCart();
       setPlaced(order);
@@ -75,6 +82,22 @@ export default function Checkout() {
       setError(err.message);
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function applyVoucher() {
+    setError('');
+    if (!voucherCode.trim()) return;
+    try {
+      const res = await api.previewVoucher(voucherCode, total);
+      if (res.discount > 0) {
+        setAppliedVoucher({ code: voucherCode.trim().toUpperCase(), discount: res.discount });
+      } else {
+        setAppliedVoucher(null);
+        setError('Mã giảm giá không hợp lệ hoặc chưa đủ điều kiện.');
+      }
+    } catch (err) {
+      setError(err.message);
     }
   }
 
@@ -133,6 +156,31 @@ export default function Checkout() {
                 className="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none"
               />
             </div>
+
+            {/* Phuong thuc thanh toan */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Phương thức thanh toán</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('COD')}
+                  className={`p-3 rounded-xl border-2 text-left transition-colors ${paymentMethod === 'COD' ? 'border-orange-500 bg-orange-50' : 'border-slate-200 hover:border-slate-300'}`}
+                >
+                  <div className="text-lg">💵</div>
+                  <div className="text-sm font-bold text-slate-800 mt-1">Thanh toán khi nhận</div>
+                  <div className="text-xs text-slate-400">COD</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('TRANSFER')}
+                  className={`p-3 rounded-xl border-2 text-left transition-colors ${paymentMethod === 'TRANSFER' ? 'border-orange-500 bg-orange-50' : 'border-slate-200 hover:border-slate-300'}`}
+                >
+                  <div className="text-lg">🏦</div>
+                  <div className="text-sm font-bold text-slate-800 mt-1">Chuyển khoản</div>
+                  <div className="text-xs text-slate-400">Chuyển trước</div>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -157,8 +205,45 @@ export default function Checkout() {
             </div>
 
             <div className="border-t border-slate-100 pt-3 flex items-center justify-between">
+              <span className="text-sm text-slate-500">Tạm tính</span>
+              <span className="text-slate-800 font-semibold">{fmtVND(total)} ₫</span>
+            </div>
+
+            {appliedVoucher && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-emerald-600">Giảm ({appliedVoucher.code})</span>
+                <span className="text-emerald-600 font-semibold">−{fmtVND(appliedVoucher.discount)} ₫</span>
+              </div>
+            )}
+
+            <div className="border-t border-slate-100 pt-3 flex items-center justify-between">
               <span className="text-sm text-slate-500">Tổng cộng</span>
-              <span className="text-xl font-extrabold text-slate-800">{fmtVND(total)} ₫</span>
+              <span className="text-xl font-extrabold text-slate-800">{fmtVND(finalTotal)} ₫</span>
+            </div>
+
+            {/* Voucher */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-1">Mã giảm giá (nếu có)</label>
+              <div className="flex gap-2">
+                <input
+                  value={voucherCode}
+                  onChange={e => setVoucherCode(e.target.value)}
+                  placeholder="Nhập mã khuyến mãi"
+                  className="flex-1 px-3 py-2.5 border border-slate-300 rounded-xl text-sm uppercase focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={applyVoucher}
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-sm font-semibold"
+                >
+                  Áp dụng
+                </button>
+              </div>
+              {appliedVoucher && (
+                <div className="mt-2 text-xs text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+                  ✓ Mã {appliedVoucher.code}: giảm {fmtVND(appliedVoucher.discount)} ₫
+                </div>
+              )}
             </div>
 
             {error && (

@@ -41,6 +41,14 @@ public class Product {
     @Column(length = 255)
     private String imageUrl;
 
+    /** Diem trung binh danh gia (khong luu DB, tinh dong). */
+    @Transient
+    private Double avgRating;
+
+    /** Tong so danh gia. */
+    @Transient
+    private Integer ratingCount = 0;
+
     public Product() {
     }
 
@@ -126,5 +134,21 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Double getAvgRating() {
+        return avgRating;
+    }
+
+    public void setAvgRating(Double avgRating) {
+        this.avgRating = avgRating;
+    }
+
+    public Integer getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(Integer ratingCount) {
+        this.ratingCount = ratingCount;
     }
 }

@@ -50,6 +50,20 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/me")
+    public Map<String, Object> updateMe(@RequestAttribute("user") User user,
+                                        @RequestBody UpdateProfileRequest body) {
+        User updated = authService.updateProfile(user, body.name(), body.phone(), body.address());
+        return userResponse(updated);
+    }
+
+    @PutMapping("/me/password")
+    public ResponseEntity<Void> changePassword(@RequestAttribute("user") User user,
+                                               @RequestBody ChangePasswordRequest body) {
+        authService.changePassword(user, body.oldPassword(), body.newPassword());
+        return ResponseEntity.noContent().build();
+    }
+
     private Map<String, Object> response(AuthService.AuthResult result) {
         Map<String, Object> map = userResponse(result.user());
         map.put("token", result.token());
@@ -88,6 +102,22 @@ public class AuthController {
             String password,
             String phone,
             String address
+    ) {
+    }
+
+    public record UpdateProfileRequest(
+            String name,
+            String phone,
+            String address
+    ) {
+    }
+
+    public record ChangePasswordRequest(
+            @NotBlank(message = "Mat khau cu khong duoc de trong")
+            String oldPassword,
+            @NotBlank(message = "Mat khau moi khong duoc de trong")
+            @Size(min = 6, message = "Mat khau moi phai co it nhat 6 ky tu")
+            String newPassword
     ) {
     }
 }
