@@ -89,6 +89,48 @@ public class AuthService {
         }
     }
 
+    /**
+     * Cap nhat thong tin ca nhan cho nguoi dung hien tai.
+     * Dong bo name/phone/address vao Customer tuong ung de don hang dung thong tin moi.
+     */
+    @Transactional
+    public User updateProfile(User user, String name, String phone, String address) {
+        if (name != null && !name.isBlank()) {
+            user.setName(name.trim());
+        }
+        user.setPhone(phone);
+        user.setAddress(address);
+
+        if (user.getCustomerId() != null) {
+            customerRepository.findById(user.getCustomerId()).ifPresent(c -> {
+                if (name != null && !name.isBlank()) c.setName(name.trim());
+                c.setPhone(phone);
+                c.setAddress(address);
+                customerRepository.save(c);
+            });
+        }
+        return userRepository.save(user);
+    }
+
+    /**
+     * Doi mat khau: kiem tra mat khau cu dung roi moi doi moi.
+     */
+    @Transactional
+    public User changePassword(User user, String oldPassword, String newPassword) {
+        if (!verifyPassword(oldPassword, user.getPasswordHash())) {
+            throw new com.evomap.dryfood.exception.UnauthorizedException("Mat khau cu khong dung");
+        }
+        if (newPassword == null || newPassword.length() < 6) {
+            throw new BadRequestException("Mat khau moi phai co it nhat 6 ky tu");
+        }
+        user.setPasswordHash(hashPassword(newPassword));
+        return userRepository.save(user);
+    }
+
+    public String hashForSeed(String password) {
+        return hashPassword(password);
+    }
+
     // ==================== helpers ====================
 
     private AuthResult issueToken(User user) {

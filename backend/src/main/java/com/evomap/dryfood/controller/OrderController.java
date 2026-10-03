@@ -2,6 +2,7 @@ package com.evomap.dryfood.controller;
 
 import com.evomap.dryfood.model.Customer;
 import com.evomap.dryfood.model.Order;
+import com.evomap.dryfood.model.OrderStatusHistory;
 import com.evomap.dryfood.model.User;
 import com.evomap.dryfood.service.OrderRequest;
 import com.evomap.dryfood.service.OrderService;
@@ -53,7 +54,17 @@ public class OrderController {
 
     @PutMapping("/{id}/status")
     public Order updateStatus(@PathVariable Long id, @RequestBody StatusUpdate body) {
-        return orderService.updateStatus(id, body.status());
+        return orderService.updateStatus(id, body.status(), body.note());
+    }
+
+    @GetMapping("/{id}/timeline")
+    public List<com.evomap.dryfood.model.OrderStatusHistory> timeline(@PathVariable Long id,
+                                                                      @RequestAttribute("user") User user) {
+        Order order = orderService.findById(id);
+        if (user.getRole() == User.Role.CUSTOMER && !user.getCustomerId().equals(order.getCustomer().getId())) {
+            throw new com.evomap.dryfood.exception.NotFoundException("Khong tim thay don hang id=" + id);
+        }
+        return orderService.timeline(id);
     }
 
     @DeleteMapping("/{id}")
@@ -62,6 +73,9 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-    public record StatusUpdate(String status) {
+    public record StatusUpdate(String status, String note) {
+        public StatusUpdate(String status) {
+            this(status, null);
+        }
     }
 }

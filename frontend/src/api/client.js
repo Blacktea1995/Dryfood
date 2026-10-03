@@ -44,9 +44,23 @@ export const api = {
   login: (body) => request('/auth/login', { method: 'POST', body: JSON.stringify(body) }),
   me: () => request('/auth/me'),
   logout: () => request('/auth/logout', { method: 'POST' }),
+  updateProfile: (body) => request('/auth/me', { method: 'PUT', body: JSON.stringify(body) }),
+  changePassword: (body) => request('/auth/me/password', { method: 'PUT', body: JSON.stringify(body) }),
 
   // Products
   getProducts: (q = '') => request('/products' + (q ? `?q=${encodeURIComponent(q)}` : '')),
+  getProductsFiltered: (params = {}) => {
+    const p = new URLSearchParams();
+    if (params.q) p.set('q', params.q);
+    if (params.category) p.set('category', params.category);
+    if (params.sort) p.set('sort', params.sort);
+    if (params.order) p.set('order', params.order);
+    if (params.page !== undefined) p.set('page', params.page);
+    if (params.size !== undefined) p.set('size', params.size);
+    const qs = p.toString();
+    return request('/products' + (qs ? '?' + qs : ''));
+  },
+  getCategories: () => request('/products/categories'),
   getProduct: (id) => request('/products/' + id),
   createProduct: (body) => request('/products', { method: 'POST', body: JSON.stringify(body) }),
   updateProduct: (id, body) => request('/products/' + id, { method: 'PUT', body: JSON.stringify(body) }),
@@ -64,8 +78,9 @@ export const api = {
   // Orders
   getOrders: (status = '') => request('/orders' + (status ? `?status=${status}` : '')),
   getOrder: (id) => request('/orders/' + id),
+  getOrderTimeline: (id) => request('/orders/' + id + '/timeline'),
   createOrder: (body) => request('/orders', { method: 'POST', body: JSON.stringify(body) }),
-  updateOrderStatus: (id, status) => request('/orders/' + id + '/status', { method: 'PUT', body: JSON.stringify({ status }) }),
+  updateOrderStatus: (id, status, note) => request('/orders/' + id + '/status', { method: 'PUT', body: JSON.stringify({ status, note }) }),
   deleteOrder: (id) => request('/orders/' + id, { method: 'DELETE' }),
 
   // Dashboard
@@ -73,5 +88,26 @@ export const api = {
   getRevenue7Days: () => request('/dashboard/revenue-last-7-days'),
   getTopProducts: () => request('/dashboard/top-products'),
   getOrdersByStatus: () => request('/dashboard/orders-by-status'),
-  getInventoryLow: () => request('/dashboard/inventory-low')
+  getInventoryLow: () => request('/dashboard/inventory-low'),
+
+  // Vouchers
+  getVouchers: () => request('/vouchers'),
+  createVoucher: (body) => request('/vouchers', { method: 'POST', body: JSON.stringify(body) }),
+  updateVoucher: (id, body) => request('/vouchers/' + id, { method: 'PUT', body: JSON.stringify(body) }),
+  deleteVoucher: (id) => request('/vouchers/' + id, { method: 'DELETE' }),
+  previewVoucher: (code, orderTotal) => request(`/vouchers/discount?code=${encodeURIComponent(code)}&orderTotal=${orderTotal}`),
+
+  // Reviews
+  getReviews: (productId) => request('/reviews?productId=' + productId),
+  createReview: (body) => request('/reviews', { method: 'POST', body: JSON.stringify(body) }),
+
+  // Analytics
+  getRfmSegments: () => request('/analytics/rfm'),
+  getChurnRisk: () => request('/analytics/churn'),
+  getForecast: (days = 7) => request('/analytics/forecast?days=' + days),
+  getDemandForecast: () => request('/analytics/demand'),
+  getRecommendations: (productId, limit = 5) => request(`/analytics/recommend?productId=${productId}&limit=${limit}`),
+
+  // Export
+  exportUrl: (kind) => '/api/export/' + kind + '.csv'
 };

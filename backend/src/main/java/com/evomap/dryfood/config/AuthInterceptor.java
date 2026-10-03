@@ -40,8 +40,8 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // Cong khai: xem danh sach san pham (store khach hang)
-        if (method.equals("GET") && path.startsWith("/api/products")) {
+        // Cong khai: xem danh sach san pham + danh gia (store khach hang, ke ca chua dang nhap)
+        if (method.equals("GET") && (path.startsWith("/api/products") || path.startsWith("/api/reviews"))) {
             return true;
         }
 
@@ -51,6 +51,9 @@ public class AuthInterceptor implements HandlerInterceptor {
         // Admin-only areas
         boolean adminArea = path.startsWith("/api/customers")
                 || path.startsWith("/api/dashboard")
+                || path.startsWith("/api/export")
+                || path.startsWith("/api/analytics")
+                || (path.startsWith("/api/vouchers") && !method.equals("GET"))
                 || (path.startsWith("/api/products") && !method.equals("GET"))
                 || (path.startsWith("/api/orders") && (method.equals("PUT") || method.equals("DELETE")));
 
