@@ -40,19 +40,25 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // Cong khai: xem danh sach san pham + danh gia (store khach hang, ke ca chua dang nhap)
-        if (method.equals("GET") && (path.startsWith("/api/products") || path.startsWith("/api/reviews"))) {
+        // Cong khai: xem danh sach san pham, danh gia, va goi y san pham lien quan
+        // (store khach hang, ke ca chua dang nhap van xem duoc)
+        if (method.equals("GET") && (path.startsWith("/api/products")
+                || path.startsWith("/api/reviews")
+                || path.equals("/api/analytics/recommend"))) {
             return true;
         }
 
         // Cac API con lai can dang nhap (gom ca /api/auth/me, /api/auth/logout)
         User user = authenticate(request);
 
+        // Goi y san pham lien quan: khach hang da dang nhap cung xem duoc (trang chi tiet san pham)
+        boolean recommendPath = method.equals("GET") && path.equals("/api/analytics/recommend");
+
         // Admin-only areas
         boolean adminArea = path.startsWith("/api/customers")
                 || path.startsWith("/api/dashboard")
                 || path.startsWith("/api/export")
-                || path.startsWith("/api/analytics")
+                || (path.startsWith("/api/analytics") && !recommendPath)
                 || (path.startsWith("/api/vouchers") && !method.equals("GET"))
                 || (path.startsWith("/api/products") && !method.equals("GET"))
                 || (path.startsWith("/api/orders") && (method.equals("PUT") || method.equals("DELETE")));
