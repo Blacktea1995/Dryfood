@@ -46,6 +46,14 @@ export default function StoreLayout() {
             >
               Đơn của tôi
             </NavLink>
+            <NavLink
+              to="/store/profile"
+              className={({ isActive }) =>
+                `px-3 py-2 rounded-lg transition-colors ${isActive ? 'bg-orange-100 text-orange-700' : 'text-slate-600 hover:bg-slate-100'}`
+              }
+            >
+              Hồ sơ
+            </NavLink>
           </nav>
 
           <div className="flex items-center gap-2 shrink-0">

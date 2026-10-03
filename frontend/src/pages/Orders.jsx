@@ -24,6 +24,7 @@ export default function Orders() {
 
   // Detail
   const [detail, setDetail] = useState(null);
+  const [timeline, setTimeline] = useState([]);
 
   useEffect(() => {
     loadAll();
@@ -113,7 +114,9 @@ export default function Orders() {
   async function openDetail(order) {
     try {
       const data = await api.getOrder(order.id);
+      const tl = await api.getOrderTimeline(order.id).catch(() => []);
       setDetail(data);
+      setTimeline(tl);
     } catch (err) {
       setError(err.message);
     }
@@ -148,12 +151,20 @@ export default function Orders() {
           <h1 className="text-2xl font-bold text-slate-800">Quản lý đơn hàng</h1>
           <p className="text-sm text-slate-500 mt-1">{orders.length} đơn hàng</p>
         </div>
-        <button
-          onClick={openCreate}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors"
-        >
-          + Tạo đơn hàng
-        </button>
+        <div className="flex items-center gap-2">
+          <a
+            href={api.exportUrl('orders')}
+            className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors"
+          >
+            ⬇️ Xuất CSV
+          </a>
+          <button
+            onClick={openCreate}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors"
+          >
+            + Tạo đơn hàng
+          </button>
+        </div>
       </div>
 
       {/* Filter */}
@@ -380,8 +391,46 @@ export default function Orders() {
             </div>
 
             <div className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3">
-              <span className="text-sm text-slate-500">Tổng cộng</span>
+              <span className="text-sm text-slate-500">Phụ thu</span>
+              <span className="text-slate-800 font-semibold">{fmtVND(detail.totalAmount + (detail.discountAmount || 0))} ₫</span>
+            </div>
+
+            {detail.discountAmount > 0 && (
+              <div className="flex items-center justify-between text-sm px-1">
+                <span className="text-emerald-600">Giảm giá {detail.voucherCode ? `(${detail.voucherCode})` : ''}</span>
+                <span className="text-emerald-600 font-semibold">−{fmtVND(detail.discountAmount)} ₫</span>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between bg-slate-100 rounded-xl px-4 py-3">
+              <span className="text-sm text-slate-600">Tổng cộng sau giảm</span>
               <span className="text-lg font-bold text-slate-800">{fmtVND(detail.totalAmount)} ₫</span>
+            </div>
+
+            <div className="text-sm text-slate-500 flex items-center gap-1">
+              <span>Thanh toán:</span>
+              <b className="text-slate-700">{detail.paymentMethod === 'TRANSFER' ? 'Chuyển khoản 🏦' : 'Khi nhận hàng (COD) 💵'}</b>
+            </div>
+
+            {/* Timeline */}
+            <div className="border-t border-slate-100 pt-3">
+              <p className="text-sm font-semibold text-slate-700 mb-2">Tiến trình đơn hàng</p>
+              {timeline.length === 0 ? (
+                <p className="text-xs text-slate-400">Chưa có dữ liệu tiến trình</p>
+              ) : (
+                <div className="space-y-2">
+                  {timeline.map((t, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <span className="w-2 h-2 mt-1.5 rounded-full bg-orange-500 shrink-0" />
+                      <div className="flex-1">
+                        <div className="text-sm font-semibold text-slate-700">{LABELS[t.status] || t.status}</div>
+                        {t.note && <div className="text-xs text-slate-400">{t.note}</div>}
+                        <div className="text-xs text-slate-400">{fmtDateTime(t.createdAt)}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {detail.note && (

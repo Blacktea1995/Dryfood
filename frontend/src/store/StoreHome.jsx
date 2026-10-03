@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../api/client.js';
 import { useCart } from './CartContext.jsx';
 import { fmtVND } from '../utils/format.js';
@@ -102,16 +103,20 @@ export default function StoreHome() {
                 key={p.id}
                 className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col"
               >
-                <div className="aspect-square bg-slate-100 flex items-center justify-center overflow-hidden">
-                  {p.imageUrl ? (
-                    <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" onError={e => { e.target.style.display = 'none'; }} />
-                  ) : (
-                    <span className="text-5xl">🍱</span>
-                  )}
-                </div>
+                <Link to={`/store/product/${p.id}`} className="block">
+                  <div className="aspect-square bg-slate-100 flex items-center justify-center overflow-hidden">
+                    {p.imageUrl ? (
+                      <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" onError={e => { e.target.style.display = 'none'; }} />
+                    ) : (
+                      <span className="text-5xl">🍱</span>
+                    )}
+                  </div>
+                </Link>
                 <div className="p-4 flex flex-col flex-1">
                   <div className="text-[11px] text-slate-400 mb-1">{p.category || 'Thực phẩm khô'}</div>
-                  <div className="font-semibold text-slate-800 text-sm leading-snug line-clamp-2">{p.name}</div>
+                  <Link to={`/store/product/${p.id}`}>
+                    <div className="font-semibold text-slate-800 text-sm leading-snug line-clamp-2 hover:text-orange-600">{p.name}</div>
+                  </Link>
                   {p.description && (
                     <div className="text-xs text-slate-400 mt-1 line-clamp-2">{p.description}</div>
                   )}

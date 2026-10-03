@@ -135,6 +135,12 @@ export default function Products() {
         >
           + Thêm sản phẩm
         </button>
+        <a
+          href={api.exportUrl('products')}
+          className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors"
+        >
+          ⬇️ Xuất CSV
+        </a>
       </div>
 
       {/* Search */}
