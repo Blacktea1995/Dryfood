@@ -6,7 +6,9 @@ const NAV_ITEMS = [
   { to: '/admin', label: 'Tổng quan', icon: '📊', end: true },
   { to: '/admin/products', label: 'Sản phẩm', icon: '📦' },
   { to: '/admin/customers', label: 'Khách hàng', icon: '👥' },
-  { to: '/admin/orders', label: 'Đơn hàng', icon: '🧾' }
+  { to: '/admin/orders', label: 'Đơn hàng', icon: '🧾' },
+  { to: '/admin/vouchers', label: 'Mã giảm giá', icon: '🎟️' },
+  { to: '/admin/analytics', label: 'Phân tích & AI', icon: '🤖' }
 ];
 
 export default function Layout() {

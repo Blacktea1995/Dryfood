@@ -151,7 +151,6 @@ export default function Vouchers() {
             </thead>
             <tbody>
               {vouchers.map(v => {
-                const st = same(v); // rename: use status
                 const s = status(v);
                 return (
                   <tr key={v.id} className="border-t border-slate-100 hover:bg-slate-50/60">

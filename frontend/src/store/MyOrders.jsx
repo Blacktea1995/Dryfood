@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api/client.js';
-import StatusBadge from '../components/StatusBadge.jsx';
+import StatusBadge, { LABELS } from '../components/StatusBadge.jsx';
 import Modal from '../components/Modal.jsx';
 import { fmtVND, fmtDateTime } from '../utils/format.js';
 
@@ -19,6 +19,7 @@ export default function MyOrders() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [detail, setDetail] = useState(null);
+  const [timeline, setTimeline] = useState([]);
 
   useEffect(() => {
     load();
@@ -40,7 +41,9 @@ export default function MyOrders() {
   async function openDetail(order) {
     try {
       const data = await api.getOrder(order.id);
+      const tl = await api.getOrderTimeline(order.id).catch(() => []);
       setDetail(data);
+      setTimeline(tl);
     } catch (err) {
       setError(err.message);
     }
@@ -163,6 +166,39 @@ export default function MyOrders() {
             <div className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3">
               <span className="text-sm text-slate-500">Tổng cộng</span>
               <span className="text-lg font-bold text-slate-800">{fmtVND(detail.totalAmount)} ₫</span>
+            </div>
+
+            {detail.discountAmount > 0 && (
+              <div className="flex items-center justify-between text-sm px-1">
+                <span className="text-emerald-600">Giảm giá {detail.voucherCode ? `(${detail.voucherCode})` : ''}</span>
+                <span className="text-emerald-600 font-semibold">−{fmtVND(detail.discountAmount)} ₫</span>
+              </div>
+            )}
+
+            <div className="text-sm text-slate-500 flex items-center gap-1">
+              <span>Thanh toán:</span>
+              <b className="text-slate-700">{detail.paymentMethod === 'TRANSFER' ? 'Chuyển khoản 🏦' : 'Khi nhận hàng (COD) 💵'}</b>
+            </div>
+
+            {/* Timeline */}
+            <div className="border-t border-slate-100 pt-3">
+              <p className="text-sm font-semibold text-slate-700 mb-2">Tiến trình đơn hàng</p>
+              {timeline.length === 0 ? (
+                <p className="text-xs text-slate-400">Chưa có dữ liệu tiến trình</p>
+              ) : (
+                <div className="space-y-2">
+                  {timeline.map((t, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <span className="w-2 h-2 mt-1.5 rounded-full bg-orange-500 shrink-0" />
+                      <div className="flex-1">
+                        <div className="text-sm font-semibold text-slate-700">{LABELS[t.status] || t.status}</div>
+                        {t.note && <div className="text-xs text-slate-400">{t.note}</div>}
+                        <div className="text-xs text-slate-400">{fmtDateTime(t.createdAt)}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {detail.note && (

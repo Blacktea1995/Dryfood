@@ -10,8 +10,12 @@ import Dashboard from './pages/Dashboard.jsx';
 import Products from './pages/Products.jsx';
 import Customers from './pages/Customers.jsx';
 import Orders from './pages/Orders.jsx';
+import Vouchers from './pages/Vouchers.jsx';
+import Analytics from './pages/Analytics.jsx';
 import StoreLayout from './store/StoreLayout.jsx';
 import StoreHome from './store/StoreHome.jsx';
+import ProductDetail from './store/ProductDetail.jsx';
+import Profile from './store/Profile.jsx';
 import Checkout from './store/Checkout.jsx';
 import MyOrders from './store/MyOrders.jsx';
 
@@ -50,6 +54,8 @@ export default function App() {
             <Route path="products" element={<Products />} />
             <Route path="customers" element={<Customers />} />
             <Route path="orders" element={<Orders />} />
+            <Route path="vouchers" element={<Vouchers />} />
+            <Route path="analytics" element={<Analytics />} />
           </Route>
 
           {/* Store khach hang */}
@@ -62,6 +68,8 @@ export default function App() {
             }
           >
             <Route index element={<StoreHome />} />
+            <Route path="product/:id" element={<ProductDetail />} />
+            <Route path="profile" element={<Profile />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="orders" element={<MyOrders />} />
           </Route>

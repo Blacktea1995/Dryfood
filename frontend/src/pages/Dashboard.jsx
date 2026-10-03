@@ -65,9 +65,19 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-800">Tổng quan kinh doanh</h1>
-        <p className="text-sm text-slate-500 mt-1">Phân tích dữ liệu bán hàng thực phẩm khô</p>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">Tổng quan kinh doanh</h1>
+          <p className="text-sm text-slate-500 mt-1">Phân tích dữ liệu bán hàng thực phẩm khô</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <a href={api.exportUrl('orders')} className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors">
+            ⬇️ Xuất đơn hàng CSV
+          </a>
+          <a href={api.exportUrl('order-items')} className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors">
+            ⬇️ Xuất chi tiết CSV
+          </a>
+        </div>
       </div>
 
       {/* Stat cards */}
