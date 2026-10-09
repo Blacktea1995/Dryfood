@@ -1,11 +1,19 @@
 import React from 'react';
 
 const ACCENT = {
-  blue: 'from-blue-500 to-blue-600',
-  green: 'from-emerald-500 to-emerald-600',
-  orange: 'from-orange-500 to-amber-500',
-  red: 'from-rose-500 to-rose-600',
-  violet: 'from-violet-500 to-violet-600'
+  blue: 'bg-forest-700',
+  green: 'bg-emerald-600',
+  orange: 'bg-amber-brand',
+  red: 'bg-rose-600',
+  violet: 'bg-forest-600'
+};
+
+const ACCENT_TEXT = {
+  blue: 'text-bone-50',
+  green: 'text-white',
+  orange: 'text-forest-950',
+  red: 'text-white',
+  violet: 'text-bone-50'
 };
 
 export default function StatCard({ title, value, sub, icon, accent = 'blue', currency = false }) {
@@ -14,17 +22,17 @@ export default function StatCard({ title, value, sub, icon, accent = 'blue', cur
     : value;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-surface-raised rounded-card border border-line p-5 shadow-sm hover:shadow-lift transition-shadow">
       <div className="flex items-start justify-between">
         <div className="min-w-0">
-          <p className="text-sm text-slate-500 font-medium">{title}</p>
-          <p className="text-3xl font-bold mt-2 text-slate-800">
+          <p className="text-sm text-ink-soft font-medium">{title}</p>
+          <p className="text-3xl font-bold mt-2 text-ink tabular">
             {formatted}
-            {currency && <span className="text-base font-semibold text-slate-400 ml-1">₫</span>}
+            {currency && <span className="text-base font-semibold text-ink-faint ml-1">₫</span>}
           </p>
-          {sub && <p className="text-xs text-slate-400 mt-2">{sub}</p>}
+          {sub && <p className="text-xs text-ink-faint mt-2">{sub}</p>}
         </div>
-        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${ACCENT[accent] || ACCENT.blue} flex items-center justify-center text-xl shrink-0`}>
+        <div className={`w-12 h-12 rounded-control ${ACCENT[accent] || ACCENT.blue} grid place-items-center text-xl shrink-0 ${ACCENT_TEXT[accent] || ACCENT_TEXT.blue}`}>
           <span>{icon}</span>
         </div>
       </div>

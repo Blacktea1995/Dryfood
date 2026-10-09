@@ -5,6 +5,7 @@ import BarChart from '../components/BarChart.jsx';
 import DonutChart from '../components/DonutChart.jsx';
 import StatusBadge, { LABELS } from '../components/StatusBadge.jsx';
 import { fmtVND, fmtDate } from '../utils/format.js';
+import { Icon } from '../store/Ui.jsx';
 
 export default function Dashboard() {
   const [summary, setSummary] = useState(null);
@@ -42,12 +43,12 @@ export default function Dashboard() {
   }
 
   if (loading) {
-    return <div className="text-center text-slate-400 py-20">Đang tải dữ liệu...</div>;
+    return <div className="text-center text-ink-faint py-20">Đang tải dữ liệu...</div>;
   }
 
   if (error) {
     return (
-      <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-xl p-4">
+      <div className="rounded-control border border-rose-200 bg-rose-50 text-rose-700 p-4">
         Không tải được dữ liệu: {error}
       </div>
     );
@@ -63,93 +64,101 @@ export default function Dashboard() {
     value: s.count
   }));
 
+  const cardCls = 'bg-surface-raised rounded-card border border-line p-5 shadow-sm';
+  const h2Cls = 'font-bold text-ink mb-1';
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Tổng quan kinh doanh</h1>
-          <p className="text-sm text-slate-500 mt-1">Phân tích dữ liệu bán hàng thực phẩm khô</p>
+          <h1 className="text-2xl font-extrabold tracking-tight text-ink">Tổng quan kinh doanh</h1>
+          <p className="text-sm text-ink-faint mt-1">Phân tích dữ liệu bán hàng thực phẩm khô</p>
         </div>
         <div className="flex items-center gap-2">
-          <a href={api.exportUrl('orders')} className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors">
-            ⬇️ Xuất đơn hàng CSV
+          <a href={api.exportUrl('orders')} className="inline-flex items-center gap-1.5 rounded-control bg-forest-800 hover:bg-forest-700 text-bone-50 px-4 py-2.5 font-semibold text-sm transition-colors">
+            <Icon name="Tag" size={16} />
+            Xuất đơn hàng CSV
           </a>
-          <a href={api.exportUrl('order-items')} className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors">
-            ⬇️ Xuất chi tiết CSV
+          <a href={api.exportUrl('order-items')} className="inline-flex items-center gap-1.5 rounded-control bg-forest-800 hover:bg-forest-700 text-bone-50 px-4 py-2.5 font-semibold text-sm transition-colors">
+            <Icon name="Tag" size={16} />
+            Xuất chi tiết CSV
           </a>
         </div>
       </div>
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Tổng doanh thu" value={summary.totalRevenue} currency accent="blue" icon="💰" sub="Toàn thời gian (trừ đơn huỷ)" />
-        <StatCard title="Doanh thu hôm nay" value={summary.revenueToday} currency accent="green" icon="📈" sub={new Date().toLocaleDateString('vi-VN')} />
-        <StatCard title="Tổng đơn hàng" value={summary.totalOrders} accent="orange" icon="🧾" sub={`${summary.pendingOrders} đơn chờ xử lý`} />
-        <StatCard title="Sản phẩm tồn kho thấp" value={summary.lowStockProducts} accent="red" icon="⚠️" sub={`${summary.totalProducts} sản phẩm · ${summary.totalCustomers} khách`} />
+        <StatCard title="Tổng doanh thu" value={summary.totalRevenue} currency accent="blue" icon="D" sub="Toàn thời gian (trừ đơn huỷ)" />
+        <StatCard title="Doanh thu hôm nay" value={summary.revenueToday} currency accent="green" icon="D" sub={new Date().toLocaleDateString('vi-VN')} />
+        <StatCard title="Tổng đơn hàng" value={summary.totalOrders} accent="orange" icon="D" sub={`${summary.pendingOrders} đơn chờ xử lý`} />
+        <StatCard title="Sản phẩm tồn kho thấp" value={summary.lowStockProducts} accent="red" icon="D" sub={`${summary.totalProducts} sản phẩm · ${summary.totalCustomers} khách`} />
       </div>
 
       {/* Charts row */}
       <div className="grid lg:grid-cols-5 gap-4">
-        <div className="lg:col-span-3 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-          <h2 className="font-bold text-slate-700 mb-1">Doanh thu 7 ngày gần nhất</h2>
-          <p className="text-xs text-slate-400 mb-3">Đơn vị: VND</p>
+        <div className={`lg:col-span-3 ${cardCls}`}>
+          <h2 className={h2Cls}>Doanh thu 7 ngày gần nhất</h2>
+          <p className="text-xs text-ink-faint mb-3">Đơn vị: VND</p>
           <BarChart data={revenueChart} />
         </div>
 
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-          <h2 className="font-bold text-slate-700 mb-3">Phân bố trạng thái đơn hàng</h2>
+        <div className={`lg:col-span-2 ${cardCls}`}>
+          <h2 className="font-bold text-ink mb-3">Phân bố trạng thái đơn hàng</h2>
           <DonutChart data={donutData} />
         </div>
       </div>
 
       {/* Bottom row */}
       <div className="grid lg:grid-cols-2 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-          <h2 className="font-bold text-slate-700 mb-3">Top 5 sản phẩm bán chạy</h2>
+        <div className={cardCls}>
+          <h2 className="font-bold text-ink mb-3">Top 5 sản phẩm bán chạy</h2>
           <div className="space-y-3">
             {topProducts.map((p, i) => (
               <div key={p.productId} className="flex items-center gap-3">
-                <span className="w-6 h-6 rounded-full bg-orange-100 text-orange-700 text-xs font-bold flex items-center justify-center shrink-0">
+                <span className="w-6 h-6 rounded-full bg-amber-brand/15 text-amber-deep text-xs font-bold grid place-items-center shrink-0 tabular">
                   {i + 1}
                 </span>
                 <img
                   src={p.imageUrl || ''}
                   alt={p.name}
-                  className="w-10 h-10 rounded-lg object-cover bg-slate-100 shrink-0"
+                  className="w-10 h-10 rounded-control object-cover bg-bone-100 shrink-0"
                   onError={e => { e.target.style.display = 'none'; }}
                 />
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-semibold text-slate-700 truncate">{p.name}</div>
-                  <div className="text-xs text-slate-400">Đã bán {p.sold} sản phẩm</div>
+                  <div className="text-sm font-semibold text-ink truncate">{p.name}</div>
+                  <div className="text-xs text-ink-faint">Đã bán {p.sold} sản phẩm</div>
                 </div>
-                <div className="text-sm font-bold text-slate-800">{fmtVND(p.revenue)} ₫</div>
+                <div className="text-sm font-bold text-ink tabular">{fmtVND(p.revenue)} ₫</div>
               </div>
             ))}
-            {topProducts.length === 0 && <p className="text-sm text-slate-400">Chưa có dữ liệu</p>}
+            {topProducts.length === 0 && <p className="text-sm text-ink-faint">Chưa có dữ liệu</p>}
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-          <h2 className="font-bold text-slate-700 mb-3">⚠️ Sản phẩm cần nhập hàng</h2>
+        <div className={cardCls}>
+          <h2 className="font-bold text-ink mb-3 inline-flex items-center gap-1.5">
+            <Icon name="WarningCircle" size={16} className="text-amber-deep" />
+            Sản phẩm cần nhập hàng
+          </h2>
           <div className="space-y-2">
             {lowStock.map(p => (
-              <div key={p.id} className="flex items-center gap-3 py-2 border-b border-slate-100 last:border-0">
+              <div key={p.id} className="flex items-center gap-3 py-2 border-b border-line last:border-0">
                 <img
                   src={p.imageUrl || ''}
                   alt={p.name}
-                  className="w-10 h-10 rounded-lg object-cover bg-slate-100 shrink-0"
+                  className="w-10 h-10 rounded-control object-cover bg-bone-100 shrink-0"
                   onError={e => { e.target.style.display = 'none'; }}
                 />
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-semibold text-slate-700 truncate">{p.name}</div>
-                  <div className="text-xs text-slate-400">{p.category || '—'}</div>
+                  <div className="text-sm font-semibold text-ink truncate">{p.name}</div>
+                  <div className="text-xs text-ink-faint">{p.category || '—'}</div>
                 </div>
-                <span className={`text-xs font-bold px-2 py-1 rounded-full ${p.stock <= 5 ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}`}>
+                <span className={`text-xs font-bold px-2 py-1 rounded-full ${p.stock <= 5 ? 'bg-rose-100 text-rose-700' : 'bg-amber-brand/15 text-amber-deep'}`}>
                   {p.stock} {p.unit || 'sp'}
                 </span>
               </div>
             ))}
-            {lowStock.length === 0 && <p className="text-sm text-slate-400">Tất cả sản phẩm đều đủ tồn kho 🎉</p>}
+            {lowStock.length === 0 && <p className="text-sm text-ink-faint">Tất cả sản phẩm đều đủ tồn kho</p>}
           </div>
         </div>
       </div>

@@ -1,25 +1,107 @@
 @import "tailwindcss";
 
-:root {
-  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+/* ============================================================
+   DryFood design tokens — market-world foundation
+   ============================================================ */
+
+/* Be Vietnam Pro: Vietnamese-optimized geometric sans, self-hosted.
+   Weights loaded: 400, 500, 600, 700, 800. */
+@import "@fontsource/be-vietnam-pro/400.css";
+@import "@fontsource/be-vietnam-pro/500.css";
+@import "@fontsource/be-vietnam-pro/600.css";
+@import "@fontsource/be-vietnam-pro/700.css";
+@import "@fontsource/be-vietnam-pro/800.css";
+
+@theme {
+  /* Forest + bone + amber market world */
+  --color-forest-950: #0f241e;
+  --color-forest-900: #143128;
+  --color-forest-800: #1b4437;
+  --color-forest-700: #245647;
+  --color-forest-600: #2f6b58;
+  --color-forest-500: #3f826c;
+  --color-forest-400: #6ba78f;
+  --color-forest-300: #9fc6b3;
+  --color-forest-200: #c9e0d3;
+  --color-forest-100: #e3efe9;
+  --color-forest-50:  #f1f7f4;
+
+  --color-bone-50:  #faf8f2;
+  --color-bone-100: #f4f0e6;
+  --color-bone-200: #e8e1d2;
+  --color-bone-300: #d5ccb8;
+
+  --color-amber-brand: #c98a2b;
+  --color-amber-deep:  #a86f1d;
+
+  /* Semantic */
+  --color-surface: var(--color-bone-50);
+  --color-surface-raised: #ffffff;
+  --color-ink: #18231f;
+  --color-ink-soft: #42534b;
+  --color-ink-faint: #6b7a72;
+  --color-line: #e2dccb;
+  --color-line-strong: #c9c1ab;
+
+  --font-sans: "Be Vietnam Pro", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+
+  --radius-card: 0.875rem;
+  --radius-control: 0.625rem;
+
+  --shadow-lift: 0 10px 30px -12px rgba(24, 35, 31, 0.18);
+  --shadow-pop: 0 18px 40px -16px rgba(24, 35, 31, 0.28);
 }
+
+:root {
+  color-scheme: light dark;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background-color: var(--color-surface);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html { scrollbar-color: var(--color-line-strong) transparent; }
 
 body {
   margin: 0;
-  background-color: #f8fafc;
-  color: #0f172a;
-  -webkit-font-smoothing: antialiased;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  font-feature-settings: "kern", "liga";
 }
 
-/* Thin scrollbar cho bảng */
-::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
-}
+/* Browser surfaces: selection, caret, scrollbars, focus, numerals */
+::selection { background: var(--color-forest-200); color: var(--color-forest-950); }
+
+* { caret-color: var(--color-forest-600); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  background: var(--color-line-strong);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
-::-webkit-scrollbar-track {
-  background: transparent;
+::-webkit-scrollbar-track { background: transparent; }
+
+:focus-visible {
+  outline: 2px solid var(--color-forest-600);
+  outline-offset: 2px;
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* Motion: one authored moment via CSS transitions; honor reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  * { transition-duration: 0.18s; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
