@@ -1,11 +1,11 @@
 import React from 'react';
 
 const STYLES = {
-  PENDING: 'bg-amber-100 text-amber-800',
-  CONFIRMED: 'bg-blue-100 text-blue-800',
-  SHIPPING: 'bg-violet-100 text-violet-800',
+  PENDING: 'bg-amber-brand/15 text-amber-deep',
+  CONFIRMED: 'bg-forest-100 text-forest-800',
+  SHIPPING: 'bg-forest-200 text-forest-900',
   DELIVERED: 'bg-emerald-100 text-emerald-800',
-  CANCELLED: 'bg-rose-100 text-rose-800'
+  CANCELLED: 'bg-rose-100 text-rose-700'
 };
 
 const LABELS = {
@@ -17,7 +17,7 @@ const LABELS = {
 };
 
 export default function StatusBadge({ status }) {
-  const cls = STYLES[status] || 'bg-slate-100 text-slate-700';
+  const cls = STYLES[status] || 'bg-bone-100 text-ink-soft';
   return (
     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${cls}`}>
       {LABELS[status] || status}

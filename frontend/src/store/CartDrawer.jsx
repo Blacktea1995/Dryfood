@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { useCart } from './CartContext.jsx';
 import { fmtVND } from '../utils/format.js';
+import { Icon, BtnPrimary } from './Ui.jsx';
 
 export default function CartDrawer({ open, onClose }) {
   const { items, total, updateQuantity, removeItem } = useCart();
@@ -21,29 +22,32 @@ export default function CartDrawer({ open, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
-      <aside className="absolute top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col">
+    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Giỏ hàng">
+      <div className="absolute inset-0 bg-forest-950/50 backdrop-blur-sm" onClick={onClose} />
+      <aside className="absolute top-0 right-0 h-full w-full max-w-md bg-surface flex flex-col shadow-pop">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-slate-800">Giỏ hàng 🛒</h3>
+        <div className="px-6 py-4 border-b border-line flex items-center justify-between">
+          <h3 className="text-lg font-extrabold text-ink inline-flex items-center gap-2">
+            <Icon name="ShoppingCartSimple" size={22} />
+            Giỏ hàng
+          </h3>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-500"
-            aria-label="Đóng"
+            className="w-9 h-9 rounded-control hover:bg-bone-100 grid place-items-center text-ink-soft transition-colors"
+            aria-label="Đóng giỏ hàng"
           >
-            ✕
+            <Icon name="X" size={18} />
           </button>
         </div>
 
         {/* Items */}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {items.length === 0 && (
-            <div className="text-center text-slate-400 py-16">
-              <div className="text-4xl mb-3">🛒</div>
-              Giỏ hàng trống
+            <div className="text-center text-ink-faint py-16">
+              <Icon name="ShoppingCartSimple" size={44} className="mx-auto mb-3 opacity-60" />
+              <p className="font-semibold text-ink">Giỏ hàng trống</p>
               <div className="text-sm mt-1">
-                <button onClick={onClose} className="text-orange-600 font-semibold hover:underline">
+                <button onClick={onClose} className="text-forest-700 font-semibold hover:underline">
                   Xem sản phẩm
                 </button>
               </div>
@@ -54,40 +58,40 @@ export default function CartDrawer({ open, onClose }) {
             const disabled = item.quantity >= item.stock;
             return (
               <div key={item.productId} className="flex gap-3 items-center">
-                <div className="w-14 h-14 rounded-xl bg-slate-100 flex items-center justify-center overflow-hidden shrink-0">
+                <div className="w-14 h-14 rounded-control bg-bone-100 flex items-center justify-center overflow-hidden shrink-0">
                   {item.imageUrl ? (
                     <img src={item.imageUrl} alt="" className="w-full h-full object-cover" onError={e => { e.target.style.display = 'none'; }} />
                   ) : (
-                    <span className="text-2xl">🍱</span>
+                    <Icon name="Package" size={24} className="text-ink-faint" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-slate-800 text-sm truncate">{item.name}</div>
-                  <div className="text-xs text-slate-400">{fmtVND(item.price)} ₫ / {item.unit}</div>
+                  <div className="font-semibold text-ink text-sm truncate">{item.name}</div>
+                  <div className="text-xs text-ink-faint">{fmtVND(item.price)} ₫ / {item.unit}</div>
                   <div className="flex items-center gap-2 mt-1">
                     <button
                       onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                      className="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold"
+                      className="w-6 h-6 rounded bg-bone-100 hover:bg-bone-200 text-ink-soft grid place-items-center transition-colors"
                       aria-label="Giảm số lượng"
                     >
-                      −
+                      <Icon name="Minus" size={12} />
                     </button>
-                    <span className="text-sm font-semibold text-slate-700 w-6 text-center">{item.quantity}</span>
+                    <span className="text-sm font-semibold text-ink w-6 text-center tabular">{item.quantity}</span>
                     <button
                       onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                       disabled={disabled}
-                      className="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold disabled:opacity-30"
+                      className="w-6 h-6 rounded bg-bone-100 hover:bg-bone-200 text-ink-soft grid place-items-center transition-colors disabled:opacity-30"
                       aria-label="Tăng số lượng"
                     >
-                      +
+                      <Icon name="Plus" size={12} />
                     </button>
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <div className="font-bold text-slate-800 text-sm">{fmtVND(item.price * item.quantity)} ₫</div>
+                  <div className="font-bold text-ink text-sm tabular">{fmtVND(item.price * item.quantity)} ₫</div>
                   <button
                     onClick={() => removeItem(item.productId)}
-                    className="text-xs text-rose-500 hover:underline mt-1"
+                    className="text-xs text-rose-600 hover:underline mt-1"
                   >
                     Xoá
                   </button>
@@ -99,17 +103,15 @@ export default function CartDrawer({ open, onClose }) {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="px-6 py-4 border-t border-slate-200 space-y-3">
+          <div className="px-6 py-4 border-t border-line space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-500">Tổng cộng</span>
-              <span className="text-xl font-extrabold text-slate-800">{fmtVND(total)} ₫</span>
+              <span className="text-sm text-ink-soft">Tổng cộng</span>
+              <span className="text-xl font-extrabold text-ink tabular">{fmtVND(total)} ₫</span>
             </div>
-            <button
-              onClick={goCheckout}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold text-sm shadow-sm transition-colors"
-            >
-              Tiến hành đặt hàng →
-            </button>
+            <BtnPrimary onClick={goCheckout} className="w-full">
+              Tiến hành đặt hàng
+              <Icon name="ArrowRight" size={16} />
+            </BtnPrimary>
           </div>
         )}
       </aside>

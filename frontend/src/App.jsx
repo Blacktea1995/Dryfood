@@ -20,15 +20,15 @@ import Checkout from './store/Checkout.jsx';
 import MyOrders from './store/MyOrders.jsx';
 
 function HomeRedirect() {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
+  const { isAdmin, loading } = useAuth();
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-slate-400 text-sm animate-pulse">Đang kiểm tra đăng nhập...</div>
+      <div className="min-h-screen flex items-center justify-center bg-surface">
+        <div className="text-ink-faint text-sm animate-pulse">Đang kiểm tra đăng nhập...</div>
       </div>
     );
   }
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  // Khách chưa đăng nhập vẫn vào được cửa hàng để xem; admin vào khu quản trị
   return <Navigate to={isAdmin ? '/admin' : '/store'} replace />;
 }
 
@@ -41,7 +41,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Admin */}
+          {/* Admin (can dang nhap + vai tro ADMIN) */}
           <Route
             path="/admin"
             element={
@@ -58,20 +58,34 @@ export default function App() {
             <Route path="analytics" element={<Analytics />} />
           </Route>
 
-          {/* Store khach hang */}
-          <Route
-            path="/store"
-            element={
-              <RequireAuth role="CUSTOMER">
-                <StoreLayout />
-              </RequireAuth>
-            }
-          >
+          {/* Store khach hang: cong khai, khong can dang nhap de xem */}
+          <Route path="/store" element={<StoreLayout />}>
             <Route index element={<StoreHome />} />
             <Route path="product/:id" element={<ProductDetail />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="checkout" element={<Checkout />} />
-            <Route path="orders" element={<MyOrders />} />
+            <Route
+              path="profile"
+              element={
+                <RequireAuth role="CUSTOMER">
+                  <Profile />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="checkout"
+              element={
+                <RequireAuth role="CUSTOMER">
+                  <Checkout />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="orders"
+              element={
+                <RequireAuth role="CUSTOMER">
+                  <MyOrders />
+                </RequireAuth>
+              }
+            />
           </Route>
 
           {/* Mac dinh */}

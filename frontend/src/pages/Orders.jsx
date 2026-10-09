@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { api } from '../api/client.js';
+import { Icon } from '../store/Ui.jsx';
 import Modal from '../components/Modal.jsx';
 import StatusBadge, { LABELS, STYLES } from '../components/StatusBadge.jsx';
 import { fmtVND, fmtDateTime } from '../utils/format.js';
@@ -148,19 +149,20 @@ export default function Orders() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Quản lý đơn hàng</h1>
-          <p className="text-sm text-slate-500 mt-1">{orders.length} đơn hàng</p>
+          <h1 className="text-2xl font-bold text-ink">Quản lý đơn hàng</h1>
+          <p className="text-sm text-ink-soft mt-1">{orders.length} đơn hàng</p>
         </div>
         <div className="flex items-center gap-2">
           <a
             href={api.exportUrl('orders')}
-            className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors"
+            className="bg-forest-800 hover:bg-forest-950 text-bone-50 px-4 py-2.5 rounded-card font-semibold text-sm shadow-sm transition-colors"
           >
-            ⬇️ Xuất CSV
+            <Icon name="Tag" size={16} />
+            Xuất CSV
           </a>
           <button
             onClick={openCreate}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors"
+            className="bg-forest-800 hover:bg-forest-700 text-bone-50 px-4 py-2.5 rounded-card font-semibold text-sm shadow-sm transition-colors"
           >
             + Tạo đơn hàng
           </button>
@@ -168,12 +170,12 @@ export default function Orders() {
       </div>
 
       {/* Filter */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+      <div className="bg-surface-raised rounded-card border border-line p-4 shadow-sm">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-sm text-slate-500 font-medium mr-1">Lọc:</span>
+          <span className="text-sm text-ink-soft font-medium mr-1">Lọc:</span>
           <button
             onClick={() => setStatusFilter('')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${!statusFilter ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+            className={`px-3 py-1.5 rounded-control text-xs font-semibold transition-colors ${!statusFilter ? 'bg-forest-800 text-bone-50' : 'bg-bone-100 text-ink-soft hover:bg-bone-200'}`}
           >
             Tất cả
           </button>
@@ -181,7 +183,7 @@ export default function Orders() {
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${statusFilter === s ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+              className={`px-3 py-1.5 rounded-control text-xs font-semibold transition-colors ${statusFilter === s ? 'bg-forest-800 text-bone-50' : 'bg-bone-100 text-ink-soft hover:bg-bone-200'}`}
             >
               {LABELS[s]}
             </button>
@@ -189,14 +191,14 @@ export default function Orders() {
         </div>
       </div>
 
-      {error && <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-xl p-4 text-sm">{error}</div>}
+      {error && <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-card p-4 text-sm">{error}</div>}
 
       {/* Orders table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-surface-raised rounded-card border border-line shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-slate-50 text-slate-500 text-left">
+              <tr className="bg-bone-100 text-ink-soft text-left">
                 <th className="px-4 py-3 font-semibold">Mã đơn</th>
                 <th className="px-4 py-3 font-semibold">Khách hàng</th>
                 <th className="px-4 py-3 font-semibold">Sản phẩm</th>
@@ -212,30 +214,30 @@ export default function Orders() {
                 const itemCount = (o.items || []).reduce((s, it) => s + it.quantity, 0);
                 const itemNames = (o.items || []).slice(0, 2).map(it => it.productName).join(', ');
                 return (
-                  <tr key={o.id} className="border-t border-slate-100 hover:bg-slate-50/60">
-                    <td className="px-4 py-3 font-mono text-xs font-semibold text-slate-700">{o.orderCode}</td>
+                  <tr key={o.id} className="border-t border-line hover:bg-bone-100/60">
+                    <td className="px-4 py-3 font-mono text-xs font-semibold text-ink">{o.orderCode}</td>
                     <td className="px-4 py-3">
-                      <div className="font-semibold text-slate-800">{cust?.name || '—'}</div>
-                      <div className="text-xs text-slate-400">{cust?.phone || cust?.email || ''}</div>
+                      <div className="font-semibold text-ink">{cust?.name || '—'}</div>
+                      <div className="text-xs text-ink-faint">{cust?.phone || cust?.email || ''}</div>
                     </td>
-                    <td className="px-4 py-3 text-slate-600 max-w-[240px]">
+                    <td className="px-4 py-3 text-ink-soft max-w-[240px]">
                       <span className="block truncate">{itemNames || '—'}</span>
-                      <span className="text-xs text-slate-400">{itemCount} sản phẩm</span>
+                      <span className="text-xs text-ink-faint">{itemCount} sản phẩm</span>
                     </td>
-                    <td className="px-4 py-3 text-right font-bold text-slate-800">{fmtVND(o.totalAmount)} ₫</td>
+                    <td className="px-4 py-3 text-right font-bold text-ink">{fmtVND(o.totalAmount)} ₫</td>
                     <td className="px-4 py-3"><StatusBadge status={o.status} /></td>
-                    <td className="px-4 py-3 text-slate-500 text-xs">{fmtDateTime(o.createdAt)}</td>
+                    <td className="px-4 py-3 text-ink-soft text-xs">{fmtDateTime(o.createdAt)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => openDetail(o)}
-                          className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700"
+                          className="px-3 py-1.5 rounded-control text-xs font-semibold bg-bone-100 hover:bg-bone-200 text-ink"
                         >
                           Chi tiết
                         </button>
                         <button
                           onClick={() => handleDelete(o)}
-                          className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700"
+                          className="px-3 py-1.5 rounded-control text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700"
                         >
                           Xoá
                         </button>
@@ -246,7 +248,7 @@ export default function Orders() {
               })}
               {!loading && orders.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="text-center text-slate-400 py-10">
+                  <td colSpan={7} className="text-center text-ink-faint py-10">
                     Không có đơn hàng nào
                   </td>
                 </tr>
@@ -261,12 +263,12 @@ export default function Orders() {
         <form onSubmit={handleCreate} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Khách hàng *</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Khách hàng *</label>
               <select
                 required
                 value={customerId}
                 onChange={e => setCustomerId(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm bg-surface-raised focus:ring-2 focus:ring-forest-500 focus:outline-none"
               >
                 <option value="">— Chọn khách hàng —</option>
                 {customers.map(c => (
@@ -275,11 +277,11 @@ export default function Orders() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Ghi chú</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Ghi chú</label>
               <input
                 value={note}
                 onChange={e => setNote(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none"
                 placeholder="VD: Giao gio hanh chinh"
               />
             </div>
@@ -287,7 +289,7 @@ export default function Orders() {
 
           {/* Line items */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">Sản phẩm</label>
+            <label className="block text-sm font-semibold text-ink mb-2">Sản phẩm</label>
             <div className="space-y-2">
               {lines.map((line, i) => {
                 const p = productMap[line.productId];
@@ -296,7 +298,7 @@ export default function Orders() {
                     <select
                       value={line.productId}
                       onChange={e => updateLine(i, 'productId', e.target.value)}
-                      className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                      className="flex-1 px-3 py-2 border border-line-strong rounded-control text-sm bg-surface-raised focus:ring-2 focus:ring-forest-500 focus:outline-none"
                     >
                       <option value="">— Chọn sản phẩm —</option>
                       {products.map(pr => (
@@ -310,17 +312,17 @@ export default function Orders() {
                       min="1"
                       value={line.quantity}
                       onChange={e => updateLine(i, 'quantity', e.target.value)}
-                      className="w-20 px-2 py-2 border border-slate-300 rounded-lg text-sm text-center focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                      className="w-20 px-2 py-2 border border-line-strong rounded-control text-sm text-center focus:ring-2 focus:ring-forest-500 focus:outline-none"
                     />
-                    {p && <span className="text-sm font-semibold text-slate-700 w-24 text-right">{fmtVND(p.price * (Number(line.quantity) || 0))}₫</span>}
+                    {p && <span className="text-sm font-semibold text-ink w-24 text-right">{fmtVND(p.price * (Number(line.quantity) || 0))}₫</span>}
                     <button
                       type="button"
                       onClick={() => removeLine(i)}
                       disabled={lines.length === 1}
-                      className="w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-sm disabled:opacity-30"
+                      className="w-8 h-8 rounded-control bg-rose-50 hover:bg-rose-100 text-rose-600 text-sm disabled:opacity-30"
                       aria-label="Xoá dòng"
                     >
-                      ✕
+                      <Icon name="X" size={18} />
                     </button>
                   </div>
                 );
@@ -329,24 +331,24 @@ export default function Orders() {
             <button
               type="button"
               onClick={addLine}
-              className="mt-2 text-sm font-semibold text-orange-600 hover:text-orange-700"
+              className="mt-2 text-sm font-semibold text-forest-700 hover:text-amber-deep"
             >
               + Thêm sản phẩm
             </button>
           </div>
 
-          <div className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3">
-            <span className="text-sm text-slate-500">Tổng cộng</span>
-            <span className="text-lg font-bold text-slate-800">{fmtVND(cartTotal)} ₫</span>
+          <div className="flex items-center justify-between bg-bone-100 rounded-card px-4 py-3">
+            <span className="text-sm text-ink-soft">Tổng cộng</span>
+            <span className="text-lg font-bold text-ink">{fmtVND(cartTotal)} ₫</span>
           </div>
 
-          {createError && <div className="bg-rose-50 text-rose-700 text-sm rounded-lg p-3">{createError}</div>}
+          {createError && <div className="bg-rose-50 text-rose-700 text-sm rounded-control p-3">{createError}</div>}
 
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setCreateOpen(false)} className="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700">
+            <button type="button" onClick={() => setCreateOpen(false)} className="px-4 py-2 rounded-control text-sm font-semibold bg-bone-100 hover:bg-bone-200 text-ink">
               Huỷ
             </button>
-            <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg text-sm font-semibold bg-orange-500 hover:bg-orange-600 text-white disabled:opacity-50">
+            <button type="submit" disabled={saving} className="px-4 py-2 rounded-control text-sm font-semibold bg-forest-800 hover:bg-forest-700 text-bone-50 disabled:opacity-50">
               {saving ? 'Đang tạo...' : 'Tạo đơn hàng'}
             </button>
           </div>
@@ -359,18 +361,18 @@ export default function Orders() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Khách hàng</p>
-                <p className="font-semibold text-slate-800">{detail.customer?.name}</p>
-                <p className="text-xs text-slate-400">{detail.customer?.phone} · {detail.customer?.email}</p>
-                {detail.customer?.address && <p className="text-xs text-slate-400">{detail.customer.address}</p>}
+                <p className="text-sm text-ink-soft">Khách hàng</p>
+                <p className="font-semibold text-ink">{detail.customer?.name}</p>
+                <p className="text-xs text-ink-faint">{detail.customer?.phone} · {detail.customer?.email}</p>
+                {detail.customer?.address && <p className="text-xs text-ink-faint">{detail.customer.address}</p>}
               </div>
               <StatusBadge status={detail.status} />
             </div>
 
-            <div className="border-t border-slate-100 pt-3">
+            <div className="border-t border-line pt-3">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-slate-400 text-xs">
+                  <tr className="text-ink-faint text-xs">
                     <th className="text-left py-1 font-semibold">Sản phẩm</th>
                     <th className="text-right py-1 font-semibold">SL</th>
                     <th className="text-right py-1 font-semibold">Đơn giá</th>
@@ -379,20 +381,20 @@ export default function Orders() {
                 </thead>
                 <tbody>
                   {(detail.items || []).map((it, i) => (
-                    <tr key={i} className="border-t border-slate-50">
-                      <td className="py-2 text-slate-700">{it.productName}</td>
-                      <td className="py-2 text-right text-slate-600">{it.quantity}</td>
-                      <td className="py-2 text-right text-slate-600">{fmtVND(it.price)}₫</td>
-                      <td className="py-2 text-right font-semibold text-slate-800">{fmtVND(it.subtotal)}₫</td>
+                    <tr key={i} className="border-t border-line">
+                      <td className="py-2 text-ink">{it.productName}</td>
+                      <td className="py-2 text-right text-ink-soft">{it.quantity}</td>
+                      <td className="py-2 text-right text-ink-soft">{fmtVND(it.price)}₫</td>
+                      <td className="py-2 text-right font-semibold text-ink">{fmtVND(it.subtotal)}₫</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
 
-            <div className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3">
-              <span className="text-sm text-slate-500">Phụ thu</span>
-              <span className="text-slate-800 font-semibold">{fmtVND(detail.totalAmount + (detail.discountAmount || 0))} ₫</span>
+            <div className="flex items-center justify-between bg-bone-100 rounded-card px-4 py-3">
+              <span className="text-sm text-ink-soft">Phụ thu</span>
+              <span className="text-ink font-semibold">{fmtVND(detail.totalAmount + (detail.discountAmount || 0))} ₫</span>
             </div>
 
             {detail.discountAmount > 0 && (
@@ -402,30 +404,30 @@ export default function Orders() {
               </div>
             )}
 
-            <div className="flex items-center justify-between bg-slate-100 rounded-xl px-4 py-3">
-              <span className="text-sm text-slate-600">Tổng cộng sau giảm</span>
-              <span className="text-lg font-bold text-slate-800">{fmtVND(detail.totalAmount)} ₫</span>
+            <div className="flex items-center justify-between bg-bone-100 rounded-card px-4 py-3">
+              <span className="text-sm text-ink-soft">Tổng cộng sau giảm</span>
+              <span className="text-lg font-bold text-ink">{fmtVND(detail.totalAmount)} ₫</span>
             </div>
 
-            <div className="text-sm text-slate-500 flex items-center gap-1">
+            <div className="text-sm text-ink-soft flex items-center gap-1">
               <span>Thanh toán:</span>
-              <b className="text-slate-700">{detail.paymentMethod === 'TRANSFER' ? 'Chuyển khoản 🏦' : 'Khi nhận hàng (COD) 💵'}</b>
+              <b className="text-ink">{detail.paymentMethod === 'TRANSFER' ? 'Chuyển khoản 🏦' : 'Khi nhận hàng (COD) 💵'}</b>
             </div>
 
             {/* Timeline */}
-            <div className="border-t border-slate-100 pt-3">
-              <p className="text-sm font-semibold text-slate-700 mb-2">Tiến trình đơn hàng</p>
+            <div className="border-t border-line pt-3">
+              <p className="text-sm font-semibold text-ink mb-2">Tiến trình đơn hàng</p>
               {timeline.length === 0 ? (
-                <p className="text-xs text-slate-400">Chưa có dữ liệu tiến trình</p>
+                <p className="text-xs text-ink-faint">Chưa có dữ liệu tiến trình</p>
               ) : (
                 <div className="space-y-2">
                   {timeline.map((t, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <span className="w-2 h-2 mt-1.5 rounded-full bg-orange-500 shrink-0" />
+                      <span className="w-2 h-2 mt-1.5 rounded-full bg-forest-800 shrink-0" />
                       <div className="flex-1">
-                        <div className="text-sm font-semibold text-slate-700">{LABELS[t.status] || t.status}</div>
-                        {t.note && <div className="text-xs text-slate-400">{t.note}</div>}
-                        <div className="text-xs text-slate-400">{fmtDateTime(t.createdAt)}</div>
+                        <div className="text-sm font-semibold text-ink">{LABELS[t.status] || t.status}</div>
+                        {t.note && <div className="text-xs text-ink-faint">{t.note}</div>}
+                        <div className="text-xs text-ink-faint">{fmtDateTime(t.createdAt)}</div>
                       </div>
                     </div>
                   ))}
@@ -434,23 +436,23 @@ export default function Orders() {
             </div>
 
             {detail.note && (
-              <div className="text-sm text-slate-500 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+              <div className="text-sm text-ink-soft bg-amber-50 border border-amber-100 rounded-control px-3 py-2">
                 📝 {detail.note}
               </div>
             )}
 
-            <div className="text-xs text-slate-400">Ngày tạo: {fmtDateTime(detail.createdAt)}</div>
+            <div className="text-xs text-ink-faint">Ngày tạo: {fmtDateTime(detail.createdAt)}</div>
 
             {/* Status change */}
             {detail.status !== 'CANCELLED' && detail.status !== 'DELIVERED' && (
               <div>
-                <p className="text-sm font-semibold text-slate-700 mb-2">Cập nhật trạng thái</p>
+                <p className="text-sm font-semibold text-ink mb-2">Cập nhật trạng thái</p>
                 <div className="flex items-center gap-2 flex-wrap">
                   {STATUS_ORDER.filter(s => s !== detail.status).map(s => (
                     <button
                       key={s}
                       onClick={() => handleStatusChange(s)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${STYLES[s] || 'bg-slate-100 text-slate-600'}`}
+                      className={`px-3 py-1.5 rounded-control text-xs font-semibold transition-colors ${STYLES[s] || 'bg-bone-100 text-ink-soft'}`}
                     >
                       {LABELS[s]}
                     </button>

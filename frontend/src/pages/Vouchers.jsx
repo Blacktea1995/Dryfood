@@ -110,9 +110,9 @@ export default function Vouchers() {
 
   function status(v) {
     const today = todayStr();
-    if (!v.active) return { label: 'Tắt', cls: 'bg-slate-100 text-slate-600' };
+    if (!v.active) return { label: 'Tắt', cls: 'bg-bone-100 text-ink-soft' };
     if (v.endDate < today) return { label: 'Hết hạn', cls: 'bg-rose-100 text-rose-700' };
-    if (v.quantity != null && v.usedCount >= v.quantity) return { label: 'Hết lượt', cls: 'bg-amber-100 text-amber-700' };
+    if (v.quantity != null && v.usedCount >= v.quantity) return { label: 'Hết lượt', cls: 'bg-amber-brand/15 text-amber-deep' };
     return { label: 'Đang chạy', cls: 'bg-emerald-100 text-emerald-700' };
   }
 
@@ -125,21 +125,21 @@ export default function Vouchers() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Mã giảm giá</h1>
-          <p className="text-sm text-slate-500 mt-1">{vouchers.length} mã khuyến mãi</p>
+          <h1 className="text-2xl font-bold text-ink">Mã giảm giá</h1>
+          <p className="text-sm text-ink-soft mt-1">{vouchers.length} mã khuyến mãi</p>
         </div>
-        <button onClick={openCreate} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors">
+        <button onClick={openCreate} className="bg-forest-800 hover:bg-forest-700 text-bone-50 px-4 py-2.5 rounded-card font-semibold text-sm shadow-sm transition-colors">
           + Tạo mã giảm giá
         </button>
       </div>
 
-      {error && <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-xl p-4 text-sm">{error}</div>}
+      {error && <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-card p-4 text-sm">{error}</div>}
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-surface-raised rounded-card border border-line shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-slate-50 text-slate-500 text-left">
+              <tr className="bg-bone-100 text-ink-soft text-left">
                 <th className="px-4 py-3 font-semibold">Mã</th>
                 <th className="px-4 py-3 font-semibold">Giảm giá</th>
                 <th className="px-4 py-3 font-semibold">Đơn tối thiểu</th>
@@ -153,17 +153,17 @@ export default function Vouchers() {
               {vouchers.map(v => {
                 const s = status(v);
                 return (
-                  <tr key={v.id} className="border-t border-slate-100 hover:bg-slate-50/60">
-                    <td className="px-4 py-3 font-mono text-xs font-bold text-orange-600">{v.code}</td>
-                    <td className="px-4 py-3 font-semibold text-slate-800">
+                  <tr key={v.id} className="border-t border-line hover:bg-bone-100/60">
+                    <td className="px-4 py-3 font-mono text-xs font-bold text-forest-700">{v.code}</td>
+                    <td className="px-4 py-3 font-semibold text-ink">
                       {displayValue(v)}
-                      {v.type === 'PERCENT' && v.maxDiscount ? <span className="block text-xs text-slate-400">tối đa {v.maxDiscount.toLocaleString('vi-VN')} ₫</span> : null}
+                      {v.type === 'PERCENT' && v.maxDiscount ? <span className="block text-xs text-ink-faint">tối đa {v.maxDiscount.toLocaleString('vi-VN')} ₫</span> : null}
                     </td>
-                    <td className="px-4 py-3 text-slate-600">{v.minOrder ? `${v.minOrder.toLocaleString('vi-VN')} ₫` : '—'}</td>
-                    <td className="px-4 py-3 text-slate-500 text-xs">
+                    <td className="px-4 py-3 text-ink-soft">{v.minOrder ? `${v.minOrder.toLocaleString('vi-VN')} ₫` : '—'}</td>
+                    <td className="px-4 py-3 text-ink-soft text-xs">
                       {v.startDate} → {v.endDate}
                     </td>
-                    <td className="px-4 py-3 text-center text-slate-600">
+                    <td className="px-4 py-3 text-center text-ink-soft">
                       {v.usedCount}{v.quantity != null ? `/${v.quantity}` : ''}
                     </td>
                     <td className="px-4 py-3">
@@ -171,15 +171,15 @@ export default function Vouchers() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => openEdit(v)} className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700">Sửa</button>
-                        <button onClick={() => handleDelete(v)} className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700">Xoá</button>
+                        <button onClick={() => openEdit(v)} className="px-3 py-1.5 rounded-control text-xs font-semibold bg-forest-100 hover:bg-forest-100 text-forest-800">Sửa</button>
+                        <button onClick={() => handleDelete(v)} className="px-3 py-1.5 rounded-control text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700">Xoá</button>
                       </div>
                     </td>
                   </tr>
                 );
               })}
               {!loading && vouchers.length === 0 && (
-                <tr><td colSpan={7} className="text-center text-slate-400 py-10">Chưa có mã giảm giá nào</td></tr>
+                <tr><td colSpan={7} className="text-center text-ink-faint py-10">Chưa có mã giảm giá nào</td></tr>
               )}
             </tbody>
           </table>
@@ -191,65 +191,65 @@ export default function Vouchers() {
         <form onSubmit={handleSave} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Mã giảm giá *</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Mã giảm giá *</label>
               <input required value={form.code} onChange={e => setForm({ ...form, code: e.target.value.toUpperCase() })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm uppercase focus:ring-2 focus:ring-orange-400 focus:outline-none" placeholder="VD: TET10" />
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm uppercase focus:ring-2 focus:ring-forest-500 focus:outline-none" placeholder="VD: TET10" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Loại</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Loại</label>
               <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-orange-400 focus:outline-none">
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm bg-surface-raised focus:ring-2 focus:ring-forest-500 focus:outline-none">
                 <option value="AMOUNT">Giảm theo số tiền</option>
                 <option value="PERCENT">Giảm theo phần trăm</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">{form.type === 'PERCENT' ? 'Phần trăm giảm (%) *' : 'Số tiền giảm (₫) *'}</label>
+              <label className="block text-sm font-semibold text-ink mb-1">{form.type === 'PERCENT' ? 'Phần trăm giảm (%) *' : 'Số tiền giảm (₫) *'}</label>
               <input required type="number" min="0" value={form.value} onChange={e => setForm({ ...form, value: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none" placeholder={form.type === 'PERCENT' ? '10' : '20000'} />
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none" placeholder={form.type === 'PERCENT' ? '10' : '20000'} />
             </div>
             {form.type === 'PERCENT' && (
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Giảm tối đa (₫)</label>
+                <label className="block text-sm font-semibold text-ink mb-1">Giảm tối đa (₫)</label>
                 <input type="number" min="0" value={form.maxDiscount} onChange={e => setForm({ ...form, maxDiscount: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none" placeholder="50000" />
+                  className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none" placeholder="50000" />
               </div>
             )}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Đơn tối thiểu (₫)</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Đơn tối thiểu (₫)</label>
               <input type="number" min="0" value={form.minOrder} onChange={e => setForm({ ...form, minOrder: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none" placeholder="100000" />
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none" placeholder="100000" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Số lượng phát hành (để trống = không giới hạn)</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Số lượng phát hành (để trống = không giới hạn)</label>
               <input type="number" min="0" value={form.quantity} onChange={e => setForm({ ...form, quantity: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none" placeholder="100" />
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none" placeholder="100" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Ngày bắt đầu</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Ngày bắt đầu</label>
               <input required type="date" value={form.startDate} onChange={e => setForm({ ...form, startDate: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none" />
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Ngày kết thúc</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Ngày kết thúc</label>
               <input required type="date" value={form.endDate} onChange={e => setForm({ ...form, endDate: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none" />
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none" />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Mô tả</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Mô tả</label>
               <input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none" placeholder="Khuyến mãi Tết..." />
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none" placeholder="Khuyến mãi Tết..." />
             </div>
             <div className="col-span-2 flex items-center gap-2">
               <input type="checkbox" id="active" checked={form.active} onChange={e => setForm({ ...form, active: e.target.checked })}
                 className="w-4 h-4" />
-              <label htmlFor="active" className="text-sm text-slate-700">Kích hoạt mã</label>
+              <label htmlFor="active" className="text-sm text-ink">Kích hoạt mã</label>
             </div>
           </div>
-          {formError && <div className="bg-rose-50 text-rose-700 text-sm rounded-lg p-3">{formError}</div>}
+          {formError && <div className="bg-rose-50 text-rose-700 text-sm rounded-control p-3">{formError}</div>}
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700">Huỷ</button>
-            <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg text-sm font-semibold bg-orange-500 hover:bg-orange-600 text-white disabled:opacity-50">
+            <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-control text-sm font-semibold bg-bone-100 hover:bg-bone-200 text-ink">Huỷ</button>
+            <button type="submit" disabled={saving} className="px-4 py-2 rounded-control text-sm font-semibold bg-forest-800 hover:bg-forest-700 text-bone-50 disabled:opacity-50">
               {saving ? 'Đang lưu...' : editingId ? 'Lưu thay đổi' : 'Tạo mã'}
             </button>
           </div>

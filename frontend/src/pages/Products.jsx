@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api/client.js';
+import { Icon } from '../store/Ui.jsx';
 import Modal from '../components/Modal.jsx';
 import { fmtVND } from '../utils/format.js';
 
@@ -126,43 +127,44 @@ export default function Products() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Quản lý sản phẩm</h1>
-          <p className="text-sm text-slate-500 mt-1">{products.length} sản phẩm thực phẩm khô</p>
+          <h1 className="text-2xl font-bold text-ink">Quản lý sản phẩm</h1>
+          <p className="text-sm text-ink-soft mt-1">{products.length} sản phẩm thực phẩm khô</p>
         </div>
         <button
           onClick={openCreate}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors"
+          className="bg-forest-800 hover:bg-forest-700 text-bone-50 px-4 py-2.5 rounded-card font-semibold text-sm shadow-sm transition-colors"
         >
           + Thêm sản phẩm
         </button>
         <a
           href={api.exportUrl('products')}
-          className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors"
+          className="bg-forest-800 hover:bg-forest-950 text-bone-50 px-4 py-2.5 rounded-card font-semibold text-sm shadow-sm transition-colors"
         >
-          ⬇️ Xuất CSV
+          <Icon name="Tag" size={16} />
+            Xuất CSV
         </a>
       </div>
 
       {/* Search */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+      <div className="bg-surface-raised rounded-card border border-line p-4 shadow-sm">
         <div className="relative max-w-md">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint"><Icon name="Info" size={18} /></span>
           <input
             value={q}
             onChange={e => setQ(e.target.value)}
             placeholder="Tìm theo tên, SKU, danh mục..."
-            className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            className="w-full pl-10 pr-4 py-2.5 border border-line-strong rounded-card text-sm focus:outline-none focus:ring-2 focus:ring-forest-500"
           />
         </div>
       </div>
 
-      {error && <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-xl p-4 text-sm">{error}</div>}
+      {error && <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-card p-4 text-sm">{error}</div>}
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-surface-raised rounded-card border border-line shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-slate-50 text-slate-500 text-left">
+              <tr className="bg-bone-100 text-ink-soft text-left">
                 <th className="px-4 py-3 font-semibold">Sản phẩm</th>
                 <th className="px-4 py-3 font-semibold">SKU</th>
                 <th className="px-4 py-3 font-semibold">Danh mục</th>
@@ -173,28 +175,28 @@ export default function Products() {
             </thead>
             <tbody>
               {products.map(p => (
-                <tr key={p.id} className="border-t border-slate-100 hover:bg-slate-50/60">
+                <tr key={p.id} className="border-t border-line hover:bg-bone-100/60">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <img
                         src={p.imageUrl || ''}
                         alt={p.name}
-                        className="w-11 h-11 rounded-lg object-cover bg-slate-100 shrink-0"
+                        className="w-11 h-11 rounded-control object-cover bg-bone-100 shrink-0"
                         onError={e => { e.target.style.display = 'none'; }}
                       />
                       <div>
-                        <div className="font-semibold text-slate-800">{p.name}</div>
-                        {p.description && <div className="text-xs text-slate-400 max-w-[220px] truncate">{p.description}</div>}
+                        <div className="font-semibold text-ink">{p.name}</div>
+                        {p.description && <div className="text-xs text-ink-faint max-w-[220px] truncate">{p.description}</div>}
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-slate-500 font-mono text-xs">{p.sku}</td>
+                  <td className="px-4 py-3 text-ink-soft font-mono text-xs">{p.sku}</td>
                   <td className="px-4 py-3">
-                    <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded-md text-xs">{p.category || '—'}</span>
+                    <span className="bg-bone-100 text-ink-soft px-2 py-1 rounded-md text-xs">{p.category || '—'}</span>
                   </td>
-                  <td className="px-4 py-3 text-right font-semibold text-slate-800">{fmtVND(p.price)} ₫</td>
+                  <td className="px-4 py-3 text-right font-semibold text-ink">{fmtVND(p.price)} ₫</td>
                   <td className="px-4 py-3 text-center">
-                    <span className={`inline-block min-w-16 px-2 py-1 rounded-lg text-xs font-bold ${p.stock <= 5 ? 'bg-rose-100 text-rose-700' : p.stock <= 10 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                    <span className={`inline-block min-w-16 px-2 py-1 rounded-control text-xs font-bold ${p.stock <= 5 ? 'bg-rose-100 text-rose-700' : p.stock <= 10 ? 'bg-amber-brand/15 text-amber-deep' : 'bg-emerald-100 text-emerald-700'}`}>
                       {p.stock} {p.unit}
                     </span>
                   </td>
@@ -202,19 +204,19 @@ export default function Products() {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => { setStockId(p.id); setStockDelta(''); setStockError(''); }}
-                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700"
+                        className="px-3 py-1.5 rounded-control text-xs font-semibold bg-bone-100 hover:bg-bone-200 text-ink"
                       >
                         Điều chỉnh kho
                       </button>
                       <button
                         onClick={() => openEdit(p)}
-                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700"
+                        className="px-3 py-1.5 rounded-control text-xs font-semibold bg-forest-100 hover:bg-forest-100 text-forest-800"
                       >
                         Sửa
                       </button>
                       <button
                         onClick={() => handleDelete(p)}
-                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700"
+                        className="px-3 py-1.5 rounded-control text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700"
                       >
                         Xoá
                       </button>
@@ -224,7 +226,7 @@ export default function Products() {
               ))}
               {!loading && products.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-center text-slate-400 py-10">
+                  <td colSpan={6} className="text-center text-ink-faint py-10">
                     Không có sản phẩm nào
                   </td>
                 </tr>
@@ -239,71 +241,71 @@ export default function Products() {
         <form onSubmit={handleSave} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Tên sản phẩm *</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Tên sản phẩm *</label>
               <input
                 required
                 value={form.name}
                 onChange={e => setForm({ ...form, name: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none"
                 placeholder="VD: Mi goi Hao Hao"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">SKU *</label>
+              <label className="block text-sm font-semibold text-ink mb-1">SKU *</label>
               <input
                 required
                 value={form.sku}
                 onChange={e => setForm({ ...form, sku: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none"
                 placeholder="VD: DF-013"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Danh mục</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Danh mục</label>
               <input
                 value={form.category}
                 onChange={e => setForm({ ...form, category: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none"
                 placeholder="VD: Do kho"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Giá bán (₫) *</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Giá bán (₫) *</label>
               <input
                 required
                 type="number"
                 min="0"
                 value={form.price}
                 onChange={e => setForm({ ...form, price: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none"
                 placeholder="45000"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Tồn kho *</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Tồn kho *</label>
               <input
                 required
                 type="number"
                 min="0"
                 value={form.stock}
                 onChange={e => setForm({ ...form, stock: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none"
                 placeholder="0"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Đơn vị</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Đơn vị</label>
               <input
                 value={form.unit}
                 onChange={e => setForm({ ...form, unit: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none"
                 placeholder="goi"
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Ảnh sản phẩm (URL)</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Ảnh sản phẩm (URL)</label>
               <div className="flex items-start gap-3">
-                <div className="w-16 h-16 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
+                <div className="w-16 h-16 rounded-card bg-bone-100 border border-line flex items-center justify-center overflow-hidden shrink-0">
                   {form.imageUrl ? (
                     <img
                       src={form.imageUrl}
@@ -312,38 +314,38 @@ export default function Products() {
                       onError={e => { e.target.style.display = 'none'; }}
                     />
                   ) : (
-                    <span className="text-2xl text-slate-300">🖼️</span>
+                    <span className="text-2xl text-bone-50/80">🖼️</span>
                   )}
                 </div>
                 <input
                   value={form.imageUrl}
                   onChange={e => setForm({ ...form, imageUrl: e.target.value })}
-                  className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                  className="flex-1 px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none"
                   placeholder="/images/mi-hao-hao.svg (ảnh trong backend) hoặc https://... (ảnh ngoài)"
                 />
               </div>
-              <p className="text-xs text-slate-400 mt-1">
-                💡 Muốn dùng ảnh của riêng bạn: bỏ file ảnh vào thư mục <code className="text-slate-500">backend/src/main/resources/static/images/</code> rồi nhập <code className="text-slate-500">/images/ten-file.png</code>. Hoặc dán URL ảnh bất kỳ trên web.
+              <p className="text-xs text-ink-faint mt-1">
+                💡 Muốn dùng ảnh của riêng bạn: bỏ file ảnh vào thư mục <code className="text-ink-soft">backend/src/main/resources/static/images/</code> rồi nhập <code className="text-ink-soft">/images/ten-file.png</code>. Hoặc dán URL ảnh bất kỳ trên web.
               </p>
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Mô tả</label>
+              <label className="block text-sm font-semibold text-ink mb-1">Mô tả</label>
               <textarea
                 value={form.description}
                 onChange={e => setForm({ ...form, description: e.target.value })}
                 rows={2}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                className="w-full px-3 py-2 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none"
               />
             </div>
           </div>
 
-          {formError && <div className="bg-rose-50 text-rose-700 text-sm rounded-lg p-3">{formError}</div>}
+          {formError && <div className="bg-rose-50 text-rose-700 text-sm rounded-control p-3">{formError}</div>}
 
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700">
+            <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-control text-sm font-semibold bg-bone-100 hover:bg-bone-200 text-ink">
               Huỷ
             </button>
-            <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg text-sm font-semibold bg-orange-500 hover:bg-orange-600 text-white disabled:opacity-50">
+            <button type="submit" disabled={saving} className="px-4 py-2 rounded-control text-sm font-semibold bg-forest-800 hover:bg-forest-700 text-bone-50 disabled:opacity-50">
               {saving ? 'Đang lưu...' : editingId ? 'Lưu thay đổi' : 'Tạo sản phẩm'}
             </button>
           </div>
@@ -353,7 +355,7 @@ export default function Products() {
       {/* Stock adjust modal */}
       <Modal open={stockId !== null} onClose={() => setStockId(null)} title="Điều chỉnh tồn kho" width="max-w-sm">
         <form onSubmit={handleAdjustStock} className="space-y-4">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-ink-soft">
             Nhập số dương để nhập thêm hàng, số âm để trừ bớt (xuất kho/điều chỉnh).
           </p>
           <input
@@ -361,15 +363,15 @@ export default function Products() {
             value={stockDelta}
             onChange={e => setStockDelta(e.target.value)}
             placeholder="VD: 20 hoặc -5"
-            className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            className="w-full px-3 py-2.5 border border-line-strong rounded-control text-sm focus:ring-2 focus:ring-forest-500 focus:outline-none"
             autoFocus
           />
-          {stockError && <div className="bg-rose-50 text-rose-700 text-sm rounded-lg p-3">{stockError}</div>}
+          {stockError && <div className="bg-rose-50 text-rose-700 text-sm rounded-control p-3">{stockError}</div>}
           <div className="flex justify-end gap-3">
-            <button type="button" onClick={() => setStockId(null)} className="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700">
+            <button type="button" onClick={() => setStockId(null)} className="px-4 py-2 rounded-control text-sm font-semibold bg-bone-100 hover:bg-bone-200 text-ink">
               Huỷ
             </button>
-            <button type="submit" className="px-4 py-2 rounded-lg text-sm font-semibold bg-orange-500 hover:bg-orange-600 text-white">
+            <button type="submit" className="px-4 py-2 rounded-control text-sm font-semibold bg-forest-800 hover:bg-forest-700 text-bone-50">
               Cập nhật
             </button>
           </div>
