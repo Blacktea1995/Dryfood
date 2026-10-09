@@ -32,9 +32,11 @@ public class Voucher {
     @Column(nullable = false, length = 20)
     private Type type = Type.AMOUNT;
 
-    /** Gia tri giam: so % (PERCENT, 0-100) hoac so tien (AMOUNT). */
+    /** Gia tri giam: so % (PERCENT, 0-100) hoac so tien (AMOUNT).
+     *  Column name `discount_value` vi `value` la reserved word trong H2 2.x. */
     @NotNull(message = "Gia tri giam khong duoc de trong")
     @Positive(message = "Gia tri giam phai > 0")
+    @Column(name = "discount_value", nullable = false)
     private Double value;
 
     /** Gia tri giam toi da (chi ap dung cho PERCENT). */
