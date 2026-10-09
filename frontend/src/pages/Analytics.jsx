@@ -58,11 +58,11 @@ export default function Analytics() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-ink">Phân tích & AI</h1>
+        <h1 className="display text-2xl text-ink">Phân tích & AI</h1>
         <p className="text-sm text-ink-soft mt-1">Dự báo nhu cầu · khách rời bỏ · phân cụm RFM · gợi ý nhập hàng (tính toán trong Java)</p>
       </div>
 
-      {error && <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-card p-4 text-sm">{error}</div>}
+      {error && <div className="bg-rose-50 border border-rose-200 text-danger rounded-card p-4 text-sm">{error}</div>}
 
       {loading ? (
         <div className="text-center text-ink-faint py-20 animate-pulse">Đang tính toán...</div>
@@ -70,10 +70,10 @@ export default function Analytics() {
         <>
           {/* Summary cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard title={`Dự báo doanh thu ${days} ngày`} value={totalForecast} currency accent="blue" icon="📈" />
-            <StatCard title="Dự báo lượng bán" value={totalQty} accent="orange" icon="📦" sub="sản phẩm" />
-            <StatCard title="Khách rủi ro cao" value={highRisk} accent="red" icon="W" />
-            <StatCard title="Sản phẩm cần nhập" value={needRestock} accent="green" icon="🔄" />
+            <StatCard title={`Dự báo doanh thu ${days} ngày`} value={totalForecast} currency accent="blue" icon="TrendUp" />
+            <StatCard title="Dự báo lượng bán" value={totalQty} accent="orange" icon="Package" sub="sản phẩm" />
+            <StatCard title="Khách rủi ro cao" value={highRisk} accent="red" icon="WarningCircle" />
+            <StatCard title="Sản phẩm cần nhập" value={needRestock} accent="green" icon="TrendDown" />
           </div>
 
           {/* Forecast */}
@@ -101,7 +101,7 @@ export default function Analytics() {
                 </thead>
                 <tbody>
                   {forecast.map(f => (
-                    <tr key={f.date} className="border-t border-line">
+                    <tr key={f.date} className="hairline">
                       <td className="px-4 py-2 text-ink">{f.date}</td>
                       <td className="px-4 py-2 text-right font-semibold text-ink">{f.forecastQty}</td>
                       <td className="px-4 py-2 text-right font-semibold text-forest-700">{fmtVND(f.forecastRev)} ₫</td>
@@ -130,10 +130,10 @@ export default function Analytics() {
                   {demand.map(d => {
                     const need = d.stock < d.forecastQtyNext7Days;
                     return (
-                      <tr key={d.productId} className="border-t border-line">
+                      <tr key={d.productId} className="hairline">
                         <td className="px-4 py-2 font-semibold text-ink">{d.name}</td>
                         <td className="px-4 py-2">
-                          <span className="bg-bone-100 text-ink-soft px-2 py-0.5 rounded-md text-xs">{d.category || '—'}</span>
+                          <span className="bg-bone-100 text-ink-soft px-2 py-0.5 rounded-md text-xs">{d.category || '-'}</span>
                         </td>
                         <td className="px-4 py-2 text-right font-semibold text-ink">{d.forecastQtyNext7Days}</td>
                         <td className={`px-4 py-2 text-right font-bold ${need ? 'text-rose-600' : 'text-emerald-600'}`}>{d.stock}</td>
@@ -164,7 +164,7 @@ export default function Analytics() {
                 </thead>
                 <tbody>
                   {segments.map(s => (
-                    <tr key={s.segment} className="border-t border-line">
+                    <tr key={s.segment} className="hairline">
                       <td className="px-4 py-2">
                         <span className={`inline-flex px-2 py-1 rounded-full text-xs font-semibold ${SEGMENT_STYLES[s.segment] || 'bg-bone-100 text-ink-soft'}`}>{s.segment}</span>
                       </td>
@@ -195,7 +195,7 @@ export default function Analytics() {
                 </thead>
                 <tbody>
                   {churn.slice(0, 15).map(c => (
-                    <tr key={c.customerId} className="border-t border-line">
+                    <tr key={c.customerId} className="hairline">
                       <td className="px-4 py-2">
                         <div className="font-semibold text-ink">{c.name}</div>
                         <div className="text-xs text-ink-faint">{c.email}</div>

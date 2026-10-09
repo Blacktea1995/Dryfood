@@ -1,11 +1,11 @@
 import React from 'react';
 
 const STYLES = {
-  PENDING: 'bg-amber-brand/15 text-amber-deep',
+  PENDING: 'bg-warning-bg text-warning',
   CONFIRMED: 'bg-forest-100 text-forest-800',
   SHIPPING: 'bg-forest-200 text-forest-900',
-  DELIVERED: 'bg-emerald-100 text-emerald-800',
-  CANCELLED: 'bg-rose-100 text-rose-700'
+  DELIVERED: 'bg-success-bg text-success',
+  CANCELLED: 'bg-danger-bg text-danger'
 };
 
 const LABELS = {

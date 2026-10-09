@@ -125,7 +125,7 @@ export default function Vouchers() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-ink">Mã giảm giá</h1>
+          <h1 className="display text-2xl text-ink">Mã giảm giá</h1>
           <p className="text-sm text-ink-soft mt-1">{vouchers.length} mã khuyến mãi</p>
         </div>
         <button onClick={openCreate} className="bg-forest-800 hover:bg-forest-700 text-bone-50 px-4 py-2.5 rounded-card font-semibold text-sm shadow-sm transition-colors">
@@ -133,13 +133,13 @@ export default function Vouchers() {
         </button>
       </div>
 
-      {error && <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-card p-4 text-sm">{error}</div>}
+      {error && <div className="bg-rose-50 border border-rose-200 text-danger rounded-card p-4 text-sm">{error}</div>}
 
       <div className="bg-surface-raised rounded-card border border-line shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-bone-100 text-ink-soft text-left">
+              <tr className="bg-bone-100/60 text-ink-soft text-left">
                 <th className="px-4 py-3 font-semibold">Mã</th>
                 <th className="px-4 py-3 font-semibold">Giảm giá</th>
                 <th className="px-4 py-3 font-semibold">Đơn tối thiểu</th>
@@ -153,13 +153,13 @@ export default function Vouchers() {
               {vouchers.map(v => {
                 const s = status(v);
                 return (
-                  <tr key={v.id} className="border-t border-line hover:bg-bone-100/60">
+                  <tr key={v.id} className="hairline hover:bg-bone-50/60">
                     <td className="px-4 py-3 font-mono text-xs font-bold text-forest-700">{v.code}</td>
                     <td className="px-4 py-3 font-semibold text-ink">
                       {displayValue(v)}
                       {v.type === 'PERCENT' && v.maxDiscount ? <span className="block text-xs text-ink-faint">tối đa {v.maxDiscount.toLocaleString('vi-VN')} ₫</span> : null}
                     </td>
-                    <td className="px-4 py-3 text-ink-soft">{v.minOrder ? `${v.minOrder.toLocaleString('vi-VN')} ₫` : '—'}</td>
+                    <td className="px-4 py-3 text-ink-soft">{v.minOrder ? `${v.minOrder.toLocaleString('vi-VN')} ₫` : '-'}</td>
                     <td className="px-4 py-3 text-ink-soft text-xs">
                       {v.startDate} → {v.endDate}
                     </td>

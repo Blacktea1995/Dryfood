@@ -127,7 +127,7 @@ export default function Products() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-ink">Quản lý sản phẩm</h1>
+          <h1 className="display text-2xl text-ink">Quản lý sản phẩm</h1>
           <p className="text-sm text-ink-soft mt-1">{products.length} sản phẩm thực phẩm khô</p>
         </div>
         <button
@@ -148,7 +148,7 @@ export default function Products() {
       {/* Search */}
       <div className="bg-surface-raised rounded-card border border-line p-4 shadow-sm">
         <div className="relative max-w-md">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint"><Icon name="Info" size={18} /></span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint"><Icon name="MagnifyingGlass" size={18} /></span>
           <input
             value={q}
             onChange={e => setQ(e.target.value)}
@@ -158,13 +158,13 @@ export default function Products() {
         </div>
       </div>
 
-      {error && <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-card p-4 text-sm">{error}</div>}
+      {error && <div className="bg-rose-50 border border-rose-200 text-danger rounded-card p-4 text-sm">{error}</div>}
 
       <div className="bg-surface-raised rounded-card border border-line shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-bone-100 text-ink-soft text-left">
+              <tr className="bg-bone-100/60 text-ink-soft text-left">
                 <th className="px-4 py-3 font-semibold">Sản phẩm</th>
                 <th className="px-4 py-3 font-semibold">SKU</th>
                 <th className="px-4 py-3 font-semibold">Danh mục</th>
@@ -175,7 +175,7 @@ export default function Products() {
             </thead>
             <tbody>
               {products.map(p => (
-                <tr key={p.id} className="border-t border-line hover:bg-bone-100/60">
+                <tr key={p.id} className="hairline hover:bg-bone-50/60">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <img
@@ -192,7 +192,7 @@ export default function Products() {
                   </td>
                   <td className="px-4 py-3 text-ink-soft font-mono text-xs">{p.sku}</td>
                   <td className="px-4 py-3">
-                    <span className="bg-bone-100 text-ink-soft px-2 py-1 rounded-md text-xs">{p.category || '—'}</span>
+                    <span className="bg-bone-100 text-ink-soft px-2 py-1 rounded-md text-xs">{p.category || '-'}</span>
                   </td>
                   <td className="px-4 py-3 text-right font-semibold text-ink">{fmtVND(p.price)} ₫</td>
                   <td className="px-4 py-3 text-center">
@@ -314,7 +314,7 @@ export default function Products() {
                       onError={e => { e.target.style.display = 'none'; }}
                     />
                   ) : (
-                    <span className="text-2xl text-bone-50/80">🖼️</span>
+                    <Icon name="Image" size={26} className="text-bone-50/80" aria-hidden="true" />
                   )}
                 </div>
                 <input
@@ -324,8 +324,9 @@ export default function Products() {
                   placeholder="/images/mi-hao-hao.svg (ảnh trong backend) hoặc https://... (ảnh ngoài)"
                 />
               </div>
-              <p className="text-xs text-ink-faint mt-1">
-                💡 Muốn dùng ảnh của riêng bạn: bỏ file ảnh vào thư mục <code className="text-ink-soft">backend/src/main/resources/static/images/</code> rồi nhập <code className="text-ink-soft">/images/ten-file.png</code>. Hoặc dán URL ảnh bất kỳ trên web.
+              <p className="text-xs text-ink-faint mt-1 inline-flex items-start gap-1.5">
+                <Icon name="Info" size={14} className="mt-0.5 shrink-0" />
+                <span>Muốn dùng ảnh của riêng bạn: bỏ file ảnh vào thư mục <code className="text-ink-soft">backend/src/main/resources/static/images/</code> rồi nhập <code className="text-ink-soft">/images/ten-file.png</code>. Hoặc dán URL ảnh bất kỳ trên web.</span>
               </p>
             </div>
             <div className="col-span-2">

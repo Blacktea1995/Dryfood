@@ -9,7 +9,7 @@ export default function Modal({ open, title, onClose, children, width = 'max-w-l
       <div className="absolute inset-0 bg-forest-950/50 backdrop-blur-sm" onClick={onClose} />
       <div className={`relative bg-surface-raised rounded-card shadow-pop w-full ${width} max-h-[90vh] overflow-y-auto`}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-line sticky top-0 bg-surface-raised rounded-t-card">
-          <h3 className="text-lg font-extrabold text-ink">{title}</h3>
+          <h3 className="display text-lg text-ink">{title}</h3>
           <button
             onClick={onClose}
             className="w-9 h-9 rounded-control hover:bg-bone-100 grid place-items-center text-ink-soft transition-colors"

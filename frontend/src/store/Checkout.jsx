@@ -4,11 +4,11 @@ import { useAuth } from '../auth/AuthContext.jsx';
 import { useCart } from './CartContext.jsx';
 import { api } from '../api/client.js';
 import { fmtVND } from '../utils/format.js';
-import { Icon, BtnPrimary, BtnGhost, CheckCircle } from './Ui.jsx';
+import { Icon, BtnPrimary, BtnGhost, CheckCircle, EmptyState } from './Ui.jsx';
 
 const PAYMENTS = [
-  { value: 'COD', label: 'Thanh toán khi nhận', sub: 'COD', icon: 'CheckCircle' },
-  { value: 'TRANSFER', label: 'Chuyển khoản', sub: 'Chuyển trước', icon: 'Info' }
+  { value: 'COD', label: 'Thanh toán khi nhận', sub: 'Trả tiền khi nhận hàng (COD)', icon: 'CheckCircle' },
+  { value: 'TRANSFER', label: 'Chuyển khoản', sub: 'Chuyển khoản trước khi giao', icon: 'Info' }
 ];
 
 export default function Checkout() {
@@ -33,7 +33,7 @@ export default function Checkout() {
         <div className="mx-auto mb-5 w-16 h-16 rounded-full bg-forest-100 grid place-items-center">
           <CheckCircle size={34} className="text-forest-700" />
         </div>
-        <h1 className="text-2xl font-extrabold text-ink">Đặt hàng thành công!</h1>
+        <h1 className="display text-2xl text-ink">Đặt hàng thành công!</h1>
         <p className="text-ink-soft mt-2">
           Mã đơn: <span className="font-mono font-bold text-ink tabular">{placed.orderCode}</span>
         </p>
@@ -41,7 +41,7 @@ export default function Checkout() {
           Tổng tiền: <b className="text-ink tabular">{fmtVND(placed.totalAmount)} ₫</b> · Trạng thái: <b className="text-ink">Chờ xác nhận</b>
         </p>
         <div className="flex items-center justify-center gap-3 mt-8">
-          <BtnGhost as={Link} to="/store">
+          <BtnGhost onClick={() => navigate('/store')}>
             <Icon name="ArrowLeft" size={16} />
             Tiếp tục mua sắm
           </BtnGhost>
@@ -55,16 +55,17 @@ export default function Checkout() {
 
   if (items.length === 0) {
     return (
-      <div className="text-center py-20 text-ink-faint">
-        <Icon name="ShoppingCartSimple" size={48} className="mx-auto mb-3 opacity-60" />
-        <p className="font-semibold text-ink">Giỏ hàng trống</p>
-        <div className="mt-4">
-          <Link to="/store" className="text-forest-700 font-semibold hover:underline text-sm inline-flex items-center gap-1">
+      <EmptyState
+        icon="ShoppingCartSimple"
+        title="Giỏ hàng trống"
+        sub="Thêm sản phẩm vào giỏ trước khi đặt hàng nhé."
+        action={
+          <Link to="/store" className="inline-flex items-center gap-1.5 rounded-control bg-forest-800 hover:bg-forest-700 text-bone-50 px-5 py-2.5 text-sm font-bold transition-colors">
             <Icon name="ArrowLeft" size={16} />
             Quay lại mua sắm
           </Link>
-        </div>
-      </div>
+        }
+      />
     );
   }
 
@@ -106,12 +107,13 @@ export default function Checkout() {
   }
 
   const inputClass = 'w-full px-3 py-2.5 rounded-control border border-line-strong bg-surface text-ink text-sm placeholder:text-ink-faint focus:ring-2 focus:ring-forest-500 focus:outline-none';
-  const labelClass = 'block text-sm font-semibold text-ink mb-1';
+  const labelClass = 'block text-sm font-semibold text-ink mb-1.5';
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink">Xác nhận đơn hàng</h1>
+      <div className="mb-8">
+        <h1 className="display text-2xl md:text-3xl text-ink">Xác nhận đơn hàng</h1>
+        <p className="text-sm text-ink-faint mt-2">Kiểm tra thông tin giao hàng và phương thức thanh toán trước khi đặt.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -152,12 +154,12 @@ export default function Checkout() {
                     type="button"
                     key={pm.value}
                     onClick={() => setPaymentMethod(pm.value)}
-                    className={`p-3 rounded-control border-2 text-left transition-colors ${paymentMethod === pm.value ? 'border-forest-600 bg-forest-50' : 'border-line-strong hover:border-forest-300'}`}
+                    className={`p-4 rounded-control border-2 text-left transition-all active:scale-[0.98] ${paymentMethod === pm.value ? 'border-forest-600 bg-forest-50' : 'border-line-strong hover:border-forest-300'}`}
                     aria-pressed={paymentMethod === pm.value}
                   >
                     <div className="text-ink"><Icon name={pm.icon} size={22} /></div>
-                    <div className="text-sm font-bold text-ink mt-1">{pm.label}</div>
-                    <div className="text-xs text-ink-faint">{pm.sub}</div>
+                    <div className="text-sm font-bold text-ink mt-1.5">{pm.label}</div>
+                    <div className="text-xs text-ink-faint mt-0.5">{pm.sub}</div>
                   </button>
                 ))}
               </div>
@@ -188,19 +190,19 @@ export default function Checkout() {
               ))}
             </div>
 
-            <div className="border-t border-line pt-3 flex items-center justify-between">
+            <div className="hairline pt-3 flex items-center justify-between">
               <span className="text-sm text-ink-soft">Tạm tính</span>
               <span className="text-ink font-semibold tabular">{fmtVND(total)} ₫</span>
             </div>
 
             {appliedVoucher && (
               <div className="flex items-center justify-between">
-                <span className="text-sm text-emerald-700">Giảm ({appliedVoucher.code})</span>
-                <span className="text-emerald-700 font-semibold tabular">−{fmtVND(appliedVoucher.discount)} ₫</span>
+                <span className="text-sm text-success">Giảm ({appliedVoucher.code})</span>
+                <span className="text-success font-semibold tabular">−{fmtVND(appliedVoucher.discount)} ₫</span>
               </div>
             )}
 
-            <div className="border-t border-line pt-3 flex items-center justify-between">
+            <div className="hairline pt-3 flex items-center justify-between">
               <span className="text-sm text-ink-soft">Tổng cộng</span>
               <span className="text-xl font-extrabold text-ink tabular">{fmtVND(finalTotal)} ₫</span>
             </div>
@@ -218,13 +220,13 @@ export default function Checkout() {
                 <button
                   type="button"
                   onClick={applyVoucher}
-                  className="px-4 py-2.5 rounded-control bg-forest-800 hover:bg-forest-700 text-bone-50 text-sm font-semibold transition-colors"
+                  className="px-4 py-2.5 rounded-control bg-forest-800 hover:bg-forest-700 text-bone-50 text-sm font-semibold transition-colors shrink-0"
                 >
                   Áp dụng
                 </button>
               </div>
               {appliedVoucher && (
-                <div className="mt-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-control px-3 py-2 inline-flex items-center gap-1">
+                <div className="mt-2 text-xs text-success bg-success-bg border border-success/20 rounded-control px-3 py-2 inline-flex items-center gap-1">
                   <Icon name="CheckCircle" size={14} />
                   Mã {appliedVoucher.code}: giảm {fmtVND(appliedVoucher.discount)} ₫
                 </div>
@@ -232,7 +234,7 @@ export default function Checkout() {
             </div>
 
             {error && (
-              <div className="flex items-center gap-2 rounded-control border border-rose-200 bg-rose-50 text-rose-700 p-3 text-sm">
+              <div className="flex items-center gap-2 rounded-control border border-rose-200 bg-rose-50 text-danger p-3 text-sm">
                 <Icon name="WarningCircle" size={18} />
                 {error}
               </div>
