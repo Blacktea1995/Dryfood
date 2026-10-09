@@ -149,7 +149,7 @@ export default function Orders() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-ink">Quản lý đơn hàng</h1>
+          <h1 className="display text-2xl text-ink">Quản lý đơn hàng</h1>
           <p className="text-sm text-ink-soft mt-1">{orders.length} đơn hàng</p>
         </div>
         <div className="flex items-center gap-2">
@@ -191,14 +191,14 @@ export default function Orders() {
         </div>
       </div>
 
-      {error && <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-card p-4 text-sm">{error}</div>}
+      {error && <div className="bg-rose-50 border border-rose-200 text-danger rounded-card p-4 text-sm">{error}</div>}
 
       {/* Orders table */}
       <div className="bg-surface-raised rounded-card border border-line shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-bone-100 text-ink-soft text-left">
+              <tr className="bg-bone-100/60 text-ink-soft text-left">
                 <th className="px-4 py-3 font-semibold">Mã đơn</th>
                 <th className="px-4 py-3 font-semibold">Khách hàng</th>
                 <th className="px-4 py-3 font-semibold">Sản phẩm</th>
@@ -214,14 +214,14 @@ export default function Orders() {
                 const itemCount = (o.items || []).reduce((s, it) => s + it.quantity, 0);
                 const itemNames = (o.items || []).slice(0, 2).map(it => it.productName).join(', ');
                 return (
-                  <tr key={o.id} className="border-t border-line hover:bg-bone-100/60">
+                  <tr key={o.id} className="hairline hover:bg-bone-50/60">
                     <td className="px-4 py-3 font-mono text-xs font-semibold text-ink">{o.orderCode}</td>
                     <td className="px-4 py-3">
-                      <div className="font-semibold text-ink">{cust?.name || '—'}</div>
+                      <div className="font-semibold text-ink">{cust?.name || '-'}</div>
                       <div className="text-xs text-ink-faint">{cust?.phone || cust?.email || ''}</div>
                     </td>
                     <td className="px-4 py-3 text-ink-soft max-w-[240px]">
-                      <span className="block truncate">{itemNames || '—'}</span>
+                      <span className="block truncate">{itemNames || '-'}</span>
                       <span className="text-xs text-ink-faint">{itemCount} sản phẩm</span>
                     </td>
                     <td className="px-4 py-3 text-right font-bold text-ink">{fmtVND(o.totalAmount)} ₫</td>
@@ -270,7 +270,7 @@ export default function Orders() {
                 onChange={e => setCustomerId(e.target.value)}
                 className="w-full px-3 py-2 border border-line-strong rounded-control text-sm bg-surface-raised focus:ring-2 focus:ring-forest-500 focus:outline-none"
               >
-                <option value="">— Chọn khách hàng —</option>
+                <option value="">- Chọn khách hàng -</option>
                 {customers.map(c => (
                   <option key={c.id} value={c.id}>{c.name} ({c.email})</option>
                 ))}
@@ -300,10 +300,10 @@ export default function Orders() {
                       onChange={e => updateLine(i, 'productId', e.target.value)}
                       className="flex-1 px-3 py-2 border border-line-strong rounded-control text-sm bg-surface-raised focus:ring-2 focus:ring-forest-500 focus:outline-none"
                     >
-                      <option value="">— Chọn sản phẩm —</option>
+                      <option value="">- Chọn sản phẩm -</option>
                       {products.map(pr => (
                         <option key={pr.id} value={pr.id} disabled={pr.stock <= 0}>
-                          {pr.name} — {fmtVND(pr.price)}₫ (kho: {pr.stock})
+                          {pr.name} - {fmtVND(pr.price)}₫ (kho: {pr.stock})
                         </option>
                       ))}
                     </select>
@@ -369,7 +369,7 @@ export default function Orders() {
               <StatusBadge status={detail.status} />
             </div>
 
-            <div className="border-t border-line pt-3">
+            <div className="hairline pt-3">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-ink-faint text-xs">
@@ -381,7 +381,7 @@ export default function Orders() {
                 </thead>
                 <tbody>
                   {(detail.items || []).map((it, i) => (
-                    <tr key={i} className="border-t border-line">
+                    <tr key={i} className="hairline">
                       <td className="py-2 text-ink">{it.productName}</td>
                       <td className="py-2 text-right text-ink-soft">{it.quantity}</td>
                       <td className="py-2 text-right text-ink-soft">{fmtVND(it.price)}₫</td>
@@ -411,11 +411,11 @@ export default function Orders() {
 
             <div className="text-sm text-ink-soft flex items-center gap-1">
               <span>Thanh toán:</span>
-              <b className="text-ink">{detail.paymentMethod === 'TRANSFER' ? 'Chuyển khoản 🏦' : 'Khi nhận hàng (COD) 💵'}</b>
+              <b className="text-ink">{detail.paymentMethod === 'TRANSFER' ? 'Chuyển khoản' : 'Khi nhận hàng (COD)'}</b>
             </div>
 
             {/* Timeline */}
-            <div className="border-t border-line pt-3">
+            <div className="hairline pt-3">
               <p className="text-sm font-semibold text-ink mb-2">Tiến trình đơn hàng</p>
               {timeline.length === 0 ? (
                 <p className="text-xs text-ink-faint">Chưa có dữ liệu tiến trình</p>
@@ -436,8 +436,11 @@ export default function Orders() {
             </div>
 
             {detail.note && (
-              <div className="text-sm text-ink-soft bg-amber-50 border border-amber-100 rounded-control px-3 py-2">
-                📝 {detail.note}
+              <div className="text-sm text-ink-soft bg-warning-bg border border-warning/20 rounded-control px-3 py-2">
+                <span className="inline-flex items-center gap-1.5">
+                  <Icon name="NotePencil" size={16} />
+                  {detail.note}
+                </span>
               </div>
             )}
 

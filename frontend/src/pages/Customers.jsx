@@ -81,7 +81,7 @@ export default function Customers() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-ink">Quản lý khách hàng</h1>
+          <h1 className="display text-2xl text-ink">Quản lý khách hàng</h1>
           <p className="text-sm text-ink-soft mt-1">{customers.length} khách hàng</p>
         </div>
         <button
@@ -104,13 +104,13 @@ export default function Customers() {
         </div>
       </div>
 
-      {error && <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-card p-4 text-sm">{error}</div>}
+      {error && <div className="bg-rose-50 border border-rose-200 text-danger rounded-card p-4 text-sm">{error}</div>}
 
       <div className="bg-surface-raised rounded-card border border-line shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-bone-100 text-ink-soft text-left">
+              <tr className="bg-bone-100/60 text-ink-soft text-left">
                 <th className="px-4 py-3 font-semibold">Khách hàng</th>
                 <th className="px-4 py-3 font-semibold">Số điện thoại</th>
                 <th className="px-4 py-3 font-semibold">Địa chỉ</th>
@@ -119,13 +119,13 @@ export default function Customers() {
             </thead>
             <tbody>
               {customers.map(c => (
-                <tr key={c.id} className="border-t border-line hover:bg-bone-100/60">
+                <tr key={c.id} className="hairline hover:bg-bone-50/60">
                   <td className="px-4 py-3">
                     <div className="font-semibold text-ink">{c.name}</div>
                     <div className="text-xs text-ink-faint">{c.email}</div>
                   </td>
-                  <td className="px-4 py-3 text-ink-soft">{c.phone || '—'}</td>
-                  <td className="px-4 py-3 text-ink-soft">{c.address || '—'}</td>
+                  <td className="px-4 py-3 text-ink-soft">{c.phone || '-'}</td>
+                  <td className="px-4 py-3 text-ink-soft">{c.address || '-'}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-2">
                       <button

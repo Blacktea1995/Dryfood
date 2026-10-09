@@ -38,7 +38,8 @@ A self-contained e-commerce system notable for pairing a customer storefront wit
 ## Brand Commitments
 
 - **Language is binding:** all customer- and admin-facing copy is Vietnamese and must remain so.
-- **Brand may be refined:** the incumbent name "DryFood", the 🍜 favicon, and the coarse Tailwind styling (orange/amber hero, slate neutrals) are treated as evidence of an early design, not as binding. Refining the name/mark/visual feel is permitted **provided the product truth, features, and Vietnamese copy are preserved**; visual replacement is handled as a later design decision, not in this record.
+- **Visual world is committed (2026 redesign):** the "Fresh Market" world in `DESIGN.md` (forest + bone + amber, Be Vietnam Pro, Phosphor icons, hairline tables, split hero, product cards with stock ribbons) is the durable visual system. Keep the world; do not drift back to coarse default styling. Brand mark: leaf SVG + "DryFood / Thực phẩm khô" wordmark (no emoji, no favicon 🍜).
+- **Anti-tells:** no em-dash, no emoji-as-icon, no decorative gradients/glassmorphism, one accent color only.
 
 ## Evidence on Hand
 

@@ -71,13 +71,13 @@ export default function Dashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-ink">Tổng quan kinh doanh</h1>
+          <h1 className="display text-2xl text-ink">Tổng quan kinh doanh</h1>
           <p className="text-sm text-ink-faint mt-1">Phân tích dữ liệu bán hàng thực phẩm khô</p>
         </div>
         <div className="flex items-center gap-2">
           <a href={api.exportUrl('orders')} className="inline-flex items-center gap-1.5 rounded-control bg-forest-800 hover:bg-forest-700 text-bone-50 px-4 py-2.5 font-semibold text-sm transition-colors">
             <Icon name="Tag" size={16} />
-            Xuất đơn hàng CSV
+            Xuất đơn CSV
           </a>
           <a href={api.exportUrl('order-items')} className="inline-flex items-center gap-1.5 rounded-control bg-forest-800 hover:bg-forest-700 text-bone-50 px-4 py-2.5 font-semibold text-sm transition-colors">
             <Icon name="Tag" size={16} />
@@ -88,10 +88,10 @@ export default function Dashboard() {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Tổng doanh thu" value={summary.totalRevenue} currency accent="blue" icon="D" sub="Toàn thời gian (trừ đơn huỷ)" />
-        <StatCard title="Doanh thu hôm nay" value={summary.revenueToday} currency accent="green" icon="D" sub={new Date().toLocaleDateString('vi-VN')} />
-        <StatCard title="Tổng đơn hàng" value={summary.totalOrders} accent="orange" icon="D" sub={`${summary.pendingOrders} đơn chờ xử lý`} />
-        <StatCard title="Sản phẩm tồn kho thấp" value={summary.lowStockProducts} accent="red" icon="D" sub={`${summary.totalProducts} sản phẩm · ${summary.totalCustomers} khách`} />
+        <StatCard title="Tổng doanh thu" value={summary.totalRevenue} currency accent="blue" icon="Bank" sub="Toàn thời gian (trừ đơn huỷ)" />
+        <StatCard title="Doanh thu hôm nay" value={summary.revenueToday} currency accent="green" icon="TrendUp" sub={new Date().toLocaleDateString('vi-VN')} />
+        <StatCard title="Tổng đơn hàng" value={summary.totalOrders} accent="orange" icon="ShoppingCartSimple" sub={`${summary.pendingOrders} đơn chờ xử lý`} />
+        <StatCard title="Sản phẩm tồn kho thấp" value={summary.lowStockProducts} accent="red" icon="WarningCircle" sub={`${summary.totalProducts} sản phẩm · ${summary.totalCustomers} khách`} />
       </div>
 
       {/* Charts row */}
@@ -151,7 +151,7 @@ export default function Dashboard() {
                 />
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-semibold text-ink truncate">{p.name}</div>
-                  <div className="text-xs text-ink-faint">{p.category || '—'}</div>
+                  <div className="text-xs text-ink-faint">{p.category || '-'}</div>
                 </div>
                 <span className={`text-xs font-bold px-2 py-1 rounded-full ${p.stock <= 5 ? 'bg-rose-100 text-rose-700' : 'bg-amber-brand/15 text-amber-deep'}`}>
                   {p.stock} {p.unit || 'sp'}

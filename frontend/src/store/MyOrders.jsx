@@ -3,7 +3,7 @@ import { api } from '../api/client.js';
 import StatusBadge, { LABELS } from '../components/StatusBadge.jsx';
 import Modal from '../components/Modal.jsx';
 import { fmtVND, fmtDateTime } from '../utils/format.js';
-import { Icon } from './Ui.jsx';
+import { Icon, PageHeading, EmptyState } from './Ui.jsx';
 
 const FILTERS = [
   { value: '', label: 'Tất cả' },
@@ -50,22 +50,24 @@ export default function MyOrders() {
     }
   }
 
+  const activeCount = orders.filter(o => o.status === 'PENDING').length;
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink">Đơn hàng của tôi</h1>
-        <p className="text-sm text-ink-faint mt-1">{orders.length} đơn hàng</p>
-      </div>
+      <PageHeading
+        title="Đơn hàng của tôi"
+        sub={orders.length > 0 ? `${orders.length} đơn hàng${activeCount > 0 ? ` · ${activeCount} đang chờ xác nhận` : ''}` : undefined}
+      />
 
       {/* Filter */}
       <div className="bg-surface-raised rounded-card border border-line p-4">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-sm text-ink-soft font-medium mr-1">Lọc:</span>
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar" role="group" aria-label="Lọc đơn hàng theo trạng thái">
           {FILTERS.map(f => (
             <button
               key={f.value}
               onClick={() => setFilter(f.value)}
-              className={`px-3 py-1.5 rounded-control text-xs font-bold transition-colors ${filter === f.value ? 'bg-forest-800 text-bone-50' : 'bg-bone-100 text-ink-soft hover:bg-bone-200'}`}
+              aria-pressed={filter === f.value}
+              className={`px-3.5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${filter === f.value ? 'bg-forest-800 text-bone-50 shadow-lift' : 'bg-bone-100 text-ink-soft hover:bg-bone-200'}`}
             >
               {f.label}
             </button>
@@ -73,7 +75,7 @@ export default function MyOrders() {
         </div>
       </div>
 
-      {error && <div className="flex items-center gap-2 rounded-control border border-rose-200 bg-rose-50 text-rose-700 p-4 text-sm">
+      {error && <div className="flex items-center gap-2 rounded-control border border-rose-200 bg-rose-50 text-danger p-4 text-sm">
         <Icon name="WarningCircle" size={18} />{error}
       </div>}
 
@@ -95,10 +97,10 @@ export default function MyOrders() {
                 const itemCount = (o.items || []).reduce((s, it) => s + it.quantity, 0);
                 const itemNames = (o.items || []).slice(0, 2).map(it => it.productName).join(', ');
                 return (
-                  <tr key={o.id} className="border-t border-line hover:bg-bone-50/60">
+                  <tr key={o.id} className="hairline hover:bg-bone-50/60">
                     <td className="px-4 py-3 font-mono text-xs font-semibold text-ink tabular">{o.orderCode}</td>
                     <td className="px-4 py-3 text-ink-soft max-w-[240px]">
-                      <span className="block truncate">{itemNames || '—'}</span>
+                      <span className="block truncate">{itemNames || '-'}</span>
                       <span className="text-xs text-ink-faint">{itemCount} sản phẩm</span>
                     </td>
                     <td className="px-4 py-3 text-right font-bold text-ink tabular">{fmtVND(o.totalAmount)} ₫</td>
@@ -119,8 +121,8 @@ export default function MyOrders() {
               })}
               {!loading && orders.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-center text-ink-faint py-10">
-                    Chưa có đơn hàng nào
+                  <td colSpan={6} className="py-6">
+                    <EmptyState icon="Package" title="Chưa có đơn hàng nào" sub="Khi bạn đặt hàng, danh sách sẽ hiển thị ở đây." />
                   </td>
                 </tr>
               )}
@@ -143,7 +145,7 @@ export default function MyOrders() {
               <StatusBadge status={detail.status} />
             </div>
 
-            <div className="border-t border-line pt-3">
+            <div className="hairline pt-3">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-ink-faint text-xs">
@@ -155,7 +157,7 @@ export default function MyOrders() {
                 </thead>
                 <tbody>
                   {(detail.items || []).map((it, i) => (
-                    <tr key={i} className="border-t border-line-soft">
+                    <tr key={i} className="hairline">
                       <td className="py-2 text-ink">{it.productName}</td>
                       <td className="py-2 text-right text-ink-soft tabular">{it.quantity}</td>
                       <td className="py-2 text-right text-ink-soft tabular">{fmtVND(it.price)}₫</td>
@@ -173,8 +175,8 @@ export default function MyOrders() {
 
             {detail.discountAmount > 0 && (
               <div className="flex items-center justify-between text-sm px-1">
-                <span className="text-emerald-700">Giảm giá {detail.voucherCode ? `(${detail.voucherCode})` : ''}</span>
-                <span className="text-emerald-700 font-semibold tabular">−{fmtVND(detail.discountAmount)} ₫</span>
+                <span className="text-success">Giảm giá {detail.voucherCode ? `(${detail.voucherCode})` : ''}</span>
+                <span className="text-success font-semibold tabular">−{fmtVND(detail.discountAmount)} ₫</span>
               </div>
             )}
 
@@ -185,7 +187,7 @@ export default function MyOrders() {
             </div>
 
             {/* Timeline */}
-            <div className="border-t border-line pt-3">
+            <div className="hairline pt-3">
               <p className="text-sm font-semibold text-ink mb-2">Tiến trình đơn hàng</p>
               {timeline.length === 0 ? (
                 <p className="text-xs text-ink-faint">Chưa có dữ liệu tiến trình</p>
@@ -193,7 +195,7 @@ export default function MyOrders() {
                 <div className="space-y-2">
                   {timeline.map((t, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <span className="w-2 h-2 mt-1.5 rounded-full bg-forest-600 shrink-0" />
+                      <span className={`w-2 h-2 mt-1.5 rounded-full shrink-0 ${i === 0 ? 'bg-forest-600' : 'bg-line-strong'}`} />
                       <div className="flex-1">
                         <div className="text-sm font-semibold text-ink">{LABELS[t.status] || t.status}</div>
                         {t.note && <div className="text-xs text-ink-faint">{t.note}</div>}
@@ -206,7 +208,7 @@ export default function MyOrders() {
             </div>
 
             {detail.note && (
-              <div className="text-sm text-ink-soft bg-amber-brand/10 border border-amber-brand/20 rounded-control px-3 py-2 inline-flex items-center gap-2">
+              <div className="text-sm text-ink-soft bg-warning-bg border border-warning/20 rounded-control px-3 py-2 inline-flex items-center gap-2">
                 <Icon name="NotePencil" size={16} />
                 {detail.note}
               </div>

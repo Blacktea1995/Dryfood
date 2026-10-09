@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from '../store/Ui.jsx';
 
 const ACCENT = {
   blue: 'bg-forest-700',
@@ -16,7 +17,8 @@ const ACCENT_TEXT = {
   violet: 'text-bone-50'
 };
 
-export default function StatCard({ title, value, sub, icon, accent = 'blue', currency = false }) {
+/* Stat card with real Phosphor icon (never emoji or bare letters) */
+export default function StatCard({ title, value, sub, icon = 'Info', accent = 'blue', currency = false }) {
   const formatted = currency
     ? new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 0 }).format(value)
     : value;
@@ -32,8 +34,8 @@ export default function StatCard({ title, value, sub, icon, accent = 'blue', cur
           </p>
           {sub && <p className="text-xs text-ink-faint mt-2">{sub}</p>}
         </div>
-        <div className={`w-12 h-12 rounded-control ${ACCENT[accent] || ACCENT.blue} grid place-items-center text-xl shrink-0 ${ACCENT_TEXT[accent] || ACCENT_TEXT.blue}`}>
-          <span>{icon}</span>
+        <div className={`w-12 h-12 rounded-control ${ACCENT[accent] || ACCENT.blue} grid place-items-center shrink-0 ${ACCENT_TEXT[accent] || ACCENT_TEXT.blue}`}>
+          <Icon name={icon} size={22} weight="duotone" />
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { api } from '../api/client.js';
 import { useAuth } from '../auth/AuthContext.jsx';
-import { Icon, BtnPrimary } from './Ui.jsx';
+import { Icon, BtnPrimary, PageHeading } from './Ui.jsx';
 
 export default function Profile() {
   const { user } = useAuth();
@@ -49,14 +49,11 @@ export default function Profile() {
   }
 
   const inputClass = 'w-full px-3 py-2.5 rounded-control border border-line-strong bg-surface text-ink text-sm placeholder:text-ink-faint focus:ring-2 focus:ring-forest-500 focus:outline-none';
-  const labelClass = 'block text-sm font-semibold text-ink mb-1';
+  const labelClass = 'block text-sm font-semibold text-ink mb-1.5';
 
   return (
     <div className="space-y-6 max-w-3xl">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink">Hồ sơ cá nhân</h1>
-        <p className="text-sm text-ink-faint mt-1">Cập nhật thông tin và thay đổi mật khẩu của bạn.</p>
-      </div>
+      <PageHeading title="Hồ sơ cá nhân" sub="Cập nhật thông tin và thay đổi mật khẩu của bạn." />
 
       {/* Profile update */}
       <div className="bg-surface-raised rounded-card border border-line p-6 space-y-4">
@@ -80,8 +77,8 @@ export default function Profile() {
           <label className={labelClass}>Địa chỉ giao hàng</label>
           <input value={address} onChange={e => setAddress(e.target.value)} placeholder="12 Le Loi, Q1, TP.HCM" className={inputClass} />
         </div>
-        {profileMsg && <div className="text-sm text-emerald-700 inline-flex items-center gap-1.5"><Icon name="CheckCircle" size={16} />{profileMsg}</div>}
-        {profileError && <div className="text-sm text-rose-600">{profileError}</div>}
+        {profileMsg && <div className="text-sm text-success inline-flex items-center gap-1.5"><Icon name="CheckCircle" size={16} />{profileMsg}</div>}
+        {profileError && <div className="text-sm text-danger">{profileError}</div>}
         <BtnPrimary onClick={saveProfile}>Lưu thay đổi</BtnPrimary>
       </div>
 
@@ -103,8 +100,8 @@ export default function Profile() {
           <label className={labelClass}>Xác nhận mật khẩu mới</label>
           <input type="password" value={confirmPass} onChange={e => setConfirmPass(e.target.value)} className={inputClass} />
         </div>
-        {passMsg && <div className="text-sm text-emerald-700 inline-flex items-center gap-1.5"><Icon name="CheckCircle" size={16} />{passMsg}</div>}
-        {passError && <div className="text-sm text-rose-600">{passError}</div>}
+        {passMsg && <div className="text-sm text-success inline-flex items-center gap-1.5"><Icon name="CheckCircle" size={16} />{passMsg}</div>}
+        {passError && <div className="text-sm text-danger">{passError}</div>}
         <BtnPrimary onClick={changePassword}>Đổi mật khẩu</BtnPrimary>
       </div>
     </div>
