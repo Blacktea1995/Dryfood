@@ -20,4 +20,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT COALESCE(AVG(r.rating), 0) FROM Review r WHERE r.product.id = :productId")
     double avgRatingFor(@Param("productId") Long productId);
+
+    /**
+     * Lay tong so danh gia + diem trung binh cho MOT LOAT san pham bang 1 query
+     * (GROUP BY) thay vi N+1 query tung san pham. Tra ve cac dong [productId, count, avg].
+     */
+    @Query("SELECT r.product.id, COUNT(r), COALESCE(AVG(r.rating), 0) " +
+           "FROM Review r WHERE r.product.id IN :productIds GROUP BY r.product.id")
+    List<Object[]> ratingSummaryFor(@Param("productIds") List<Long> productIds);
 }

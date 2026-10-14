@@ -43,8 +43,28 @@ public class ReviewService {
     }
 
     public void populateRatings(List<Product> products) {
+        if (products == null || products.isEmpty()) {
+            return;
+        }
+        // Gom toan bo thanh 1 query GROUP BY thay vi N+1 query tung san pham.
+        // (Truoc day 100 san pham = 200+ query -> ket noi cloud cham, HTTP 502.)
+        List<Long> ids = products.stream().map(Product::getId).toList();
+        List<Object[]> rows = reviewRepository.ratingSummaryFor(ids);
+        java.util.Map<Long, Object[]> byId = new java.util.HashMap<>();
+        for (Object[] row : rows) {
+            byId.put((Long) row[0], row);
+        }
         for (Product p : products) {
-            populateRating(p);
+            Object[] row = byId.get(p.getId());
+            if (row == null) {
+                p.setRatingCount(0);
+                p.setAvgRating(null);
+            } else {
+                long count = ((Number) row[1]).longValue();
+                double avg = ((Number) row[2]).doubleValue();
+                p.setRatingCount((int) count);
+                p.setAvgRating(count == 0 ? null : Math.round(avg * 10.0) / 10.0);
+            }
         }
     }
 
