@@ -43,15 +43,55 @@ public class OrderService {
     }
 
     public List<Order> findAll(String status) {
+        return findAllWithPage(status, null, null).orders();
+    }
+
+    /** Ket qua phan trang don hang. */
+    public record PageOrders(List<Order> orders, long total, int page, int size) {
+    }
+
+    /**
+     * Tim don (loc theo trang thai) + phan trang. Khi khong truyen page/size
+     * thi tra toan bo (tuong thich nguoc), nguoc lai chi tra 1 trang.
+     * Luon eager-fetch items + customer (JOIN FETCH) de tranh N+1 lazy.
+     */
+    public PageOrders findAllWithPage(String status, Integer page, Integer size) {
+        if (page == null || size == null) {
+            List<Order> base;
+            if (status != null && !status.isBlank()) {
+                try {
+                    Status s = Status.valueOf(status.trim().toUpperCase());
+                    base = orderRepository.findByStatusWithItems(s);
+                } catch (IllegalArgumentException ex) {
+                    throw new BadRequestException("Trang thai khong hop le: " + status);
+                }
+            } else {
+                base = orderRepository.findAllWithItems();
+            }
+            return new PageOrders(base, base.size(), 0, base.size());
+        }
+
+        // Phan trang 2 buoc: (1) LIMIT nhanh tren bang orders de lay id 1 trang,
+        // (2) fetch dung cac don do kem items+customer (IN :ids) - khong quet het items.
+        int p = Math.max(0, page);
+        int s = Math.max(1, Math.min(size, 200));
+        List<Order> orders;
         if (status != null && !status.isBlank()) {
             try {
-                Status s = Status.valueOf(status.trim().toUpperCase());
-                return orderRepository.findByStatusOrderByCreatedAtDesc(s);
+                Status st = Status.valueOf(status.trim().toUpperCase());
+                List<Long> ids = orderRepository.findPageIdsByStatus(st.name(), s, p * s);
+                orders = ids.isEmpty() ? List.of() : orderRepository.findByIdsWithItems(ids);
             } catch (IllegalArgumentException ex) {
                 throw new BadRequestException("Trang thai khong hop le: " + status);
             }
+        } else {
+            List<Long> ids = orderRepository.findPageIds(s, p * s);
+            orders = ids.isEmpty() ? List.of() : orderRepository.findByIdsWithItems(ids);
         }
-        return orderRepository.findAllByOrderByCreatedAtDesc();
+        long total = (status != null && !status.isBlank())
+                ? orderRepository.countByStatus(Status.valueOf(status.trim().toUpperCase()))
+                : orderRepository.count();
+        return new PageOrders(orders, total, p, s);
     }
 
     /**
@@ -69,7 +109,7 @@ public class OrderService {
                 throw new BadRequestException("Trang thai khong hop le: " + status);
             }
         }
-        return orderRepository.findByCustomerIdOrderByCreatedAtDesc(customerId);
+        return orderRepository.findByCustomerIdWithItems(customerId);
     }
 
     public Order findById(Long id) {

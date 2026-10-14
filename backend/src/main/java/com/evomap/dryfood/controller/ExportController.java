@@ -34,7 +34,7 @@ public class ExportController {
         StringBuilder sb = new StringBuilder();
         sb.append("\uFEFF").append("MaDon,NgayTao,KhachHang,Email,SDT,DiaChi,PhuongThucTT,TrangThai,TongTien,GiamGia,Voucher,GhiChu\n");
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        for (Order o : orderRepository.findAllByOrderByCreatedAtDesc()) {
+        for (Order o : orderRepository.findAllWithItems()) {
             sb.append(csv(o.getOrderCode())).append(',')
                     .append(csv(o.getCreatedAt().format(fmt))).append(',')
                     .append(csv(o.getCustomer() == null ? "" : o.getCustomer().getName())).append(',')
@@ -56,7 +56,7 @@ public class ExportController {
         StringBuilder sb = new StringBuilder();
         sb.append("\uFEFF").append("MaDon,NgayTao,KhachHang,SanPham,SKU,SoLuong,DonGia,ThanhTien\n");
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        for (Order o : orderRepository.findAllByOrderByCreatedAtDesc()) {
+        for (Order o : orderRepository.findAllWithItems()) {
             for (OrderItem item : o.getItems()) {
                 sb.append(csv(o.getOrderCode())).append(',')
                         .append(csv(o.getCreatedAt().format(fmt))).append(',')

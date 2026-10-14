@@ -131,7 +131,7 @@ public class AnalyticsService {
         List<ForecastPoint> out = new ArrayList<>();
         int d = Math.min(Math.max(days, 1), 30);
         LocalDateTime from = LocalDate.now().minusDays(60).atStartOfDay();
-        List<Order> orders = orderRepository.findAllByOrderByCreatedAtDesc();
+        List<Order> orders = orderRepository.findAllWithItems();
 
         double[] dowTotals = new double[7];
         long[] dowCounts = new long[7];
@@ -181,7 +181,7 @@ public class AnalyticsService {
         Map<Long, Double> prodAvgRev = new HashMap<>();
         // qty per product per day of week - simplified: aggregate qty in window
         long histDays = 60;
-        for (Order o : orderRepository.findAllByOrderByCreatedAtDesc()) {
+        for (Order o : orderRepository.findAllWithItems()) {
             if (o.getStatus() == Status.CANCELLED) continue;
             if (o.getCreatedAt().toLocalDate().isBefore(from.toLocalDate())) continue;
             for (OrderItem it : o.getItems()) {
@@ -213,7 +213,7 @@ public class AnalyticsService {
 
     /** Goi y san pham lien quan (co-purchase) cho mot san pham. */
     public List<Recommendation> recommendForProduct(Long productId, int limit) {
-        List<Order> orders = orderRepository.findAllByOrderByCreatedAtDesc();
+        List<Order> orders = orderRepository.findAllWithItems();
         Map<Long, Long> coCount = new HashMap<>();
         for (Order o : orders) {
             if (o.getStatus() == Status.CANCELLED) continue;
@@ -263,7 +263,7 @@ public class AnalyticsService {
     // ==============================
 
     private Map<Customer, RFM> computeRfm() {
-        List<Order> orders = orderRepository.findAll();
+        List<Order> orders = orderRepository.findAllWithItems();
         Map<Long, List<Order>> byCustomer = new HashMap<>();
         for (Order o : orders) {
             if (o.getCustomer() != null && o.getStatus() != Status.CANCELLED) {
@@ -288,7 +288,7 @@ public class AnalyticsService {
     /** Top san pham ban chay (gan giong DashboardService.topProducts). */
     private List<TopProduct> topProductsInternal() {
         Map<Long, long[]> agg = new LinkedHashMap<>(); // productId -> {sold, rev}
-        for (Order o : orderRepository.findAll()) {
+        for (Order o : orderRepository.findAllWithItems()) {
             if (o.getStatus() == Status.CANCELLED) continue;
             o.getItems().forEach(it -> {
                 long pid = it.getProduct().getId();

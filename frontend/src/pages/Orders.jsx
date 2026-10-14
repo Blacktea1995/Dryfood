@@ -14,6 +14,9 @@ export default function Orders() {
   const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const PAGE_SIZE = 100;
+  const [page, setPage] = useState(0);
+  const [totalOrders, setTotalOrders] = useState(0);
 
   // Create order
   const [createOpen, setCreateOpen] = useState(false);
@@ -28,18 +31,28 @@ export default function Orders() {
   const [timeline, setTimeline] = useState([]);
 
   useEffect(() => {
-    loadAll();
+    setPage(0);
   }, [statusFilter]);
+
+  useEffect(() => {
+    loadAll();
+  }, [statusFilter, page]);
 
   async function loadAll() {
     try {
       setError('');
       const [o, p, c] = await Promise.all([
-        api.getOrders(statusFilter),
+        api.getOrders(statusFilter, page, PAGE_SIZE),
         api.getProducts(),
         api.getCustomers()
       ]);
-      setOrders(o);
+      if (Array.isArray(o)) {
+        setOrders(o);
+        setTotalOrders(o.length);
+      } else {
+        setOrders(o.orders || []);
+        setTotalOrders(o.total || 0);
+      }
       setProducts(p);
       setCustomers(c);
     } catch (e) {
@@ -150,7 +163,7 @@ export default function Orders() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="display text-2xl text-ink">Quản lý đơn hàng</h1>
-          <p className="text-sm text-ink-soft mt-1">{orders.length} đơn hàng</p>
+          <p className="text-sm text-ink-soft mt-1">{totalOrders} đơn hàng</p>
         </div>
         <div className="flex items-center gap-2">
           <a
@@ -257,6 +270,31 @@ export default function Orders() {
           </table>
         </div>
       </div>
+
+      {/* Pagination */}
+      {totalOrders > PAGE_SIZE && (
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <p className="text-sm text-ink-soft">
+            Trang {page + 1} / {Math.ceil(totalOrders / PAGE_SIZE)} · {totalOrders} đơn
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage(p => Math.max(0, p - 1))}
+              disabled={page === 0}
+              className="px-4 py-2 rounded-control text-sm font-semibold bg-bone-100 hover:bg-bone-200 text-ink disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              ← Trước
+            </button>
+            <button
+              onClick={() => setPage(p => p + 1)}
+              disabled={(page + 1) * PAGE_SIZE >= totalOrders}
+              className="px-4 py-2 rounded-control text-sm font-semibold bg-bone-100 hover:bg-bone-200 text-ink disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Sau →
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Create order modal */}
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Tạo đơn hàng mới" width="max-w-2xl">

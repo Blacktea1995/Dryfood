@@ -76,7 +76,13 @@ export const api = {
   deleteCustomer: (id) => request('/customers/' + id, { method: 'DELETE' }),
 
   // Orders
-  getOrders: (status = '') => request('/orders' + (status ? `?status=${status}` : '')),
+  getOrders: (status = '', page = null, size = null) => {
+    const q = [];
+    if (status) q.push('status=' + status);
+    if (page != null) q.push('page=' + page);
+    if (size != null) q.push('size=' + size);
+    return request('/orders' + (q.length ? '?' + q.join('&') : ''));
+  },
   getOrder: (id) => request('/orders/' + id),
   getOrderTimeline: (id) => request('/orders/' + id + '/timeline'),
   createOrder: (body) => request('/orders', { method: 'POST', body: JSON.stringify(body) }),

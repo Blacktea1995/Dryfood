@@ -63,7 +63,7 @@ public class DashboardService {
 
         LocalDateTime from = today.minusDays(DAYS - 1L).atStartOfDay();
         LocalDateTime to = today.plusDays(1L).atStartOfDay();
-        List<Order> orders = orderRepository.findAllByOrderByCreatedAtDesc();
+        List<Order> orders = orderRepository.findAllWithItems();
 
         for (Order o : orders) {
             if (o.getStatus() == Status.CANCELLED) continue;
@@ -106,7 +106,7 @@ public class DashboardService {
         for (Status s : Status.values()) {
             counts.put(s, 0L);
         }
-        for (Order o : orderRepository.findAll()) {
+        for (Order o : orderRepository.findAllWithItems()) {
             counts.merge(o.getStatus(), 1L, Long::sum);
         }
         return counts.entrySet().stream()

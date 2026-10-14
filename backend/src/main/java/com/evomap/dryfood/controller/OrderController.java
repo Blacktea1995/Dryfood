@@ -25,12 +25,14 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<Order> list(@RequestParam(required = false) String status,
-                            @RequestAttribute("user") User user) {
+    public Object list(@RequestParam(required = false) String status,
+                       @RequestParam(required = false) Integer page,
+                       @RequestParam(required = false) Integer size,
+                       @RequestAttribute("user") User user) {
         if (user.getRole() == User.Role.CUSTOMER) {
             return orderService.findByCustomer(user.getCustomerId(), status);
         }
-        return orderService.findAll(status);
+        return orderService.findAllWithPage(status, page, size);
     }
 
     @GetMapping("/{id}")
