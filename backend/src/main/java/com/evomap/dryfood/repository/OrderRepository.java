@@ -32,4 +32,15 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o WHERE o.status = :status")
     double sumTotalByStatus(@Param("status") Status status);
+
+    /**
+     * Top san pham ban chay: gop quantity + doanh thu theo product tu order_items
+     * (bo don CANCELLED), 1 query GROUP BY thay vi load toan bo order vao memory
+     * (truoc day 1000 don = 1000+ query lazy items -> treo tren cloud, HTTP 502).
+     * Tra ve cac dong [productId, tongSoLuong, tongDoanhThu].
+     */
+    @Query("SELECT oi.product.id, SUM(oi.quantity), SUM(oi.price * oi.quantity) " +
+           "FROM OrderItem oi WHERE oi.order.status <> :excluded " +
+           "GROUP BY oi.product.id ORDER BY SUM(oi.quantity) DESC")
+    List<Object[]> topProductsBySold(@Param("excluded") Status excluded);
 }

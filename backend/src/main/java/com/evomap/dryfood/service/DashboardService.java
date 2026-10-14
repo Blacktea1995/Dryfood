@@ -81,25 +81,21 @@ public class DashboardService {
     }
 
     public List<TopProduct> topProducts() {
-        Map<Long, long[]> agg = new LinkedHashMap<>(); // productId -> {sold, revenue(rounded cent)}
-        for (Order o : orderRepository.findAll()) {
-            if (o.getStatus() == Status.CANCELLED) continue;
-            o.getItems().forEach(item -> {
-                long pid = item.getProduct().getId();
-                long[] cur = agg.computeIfAbsent(pid, k -> new long[2]);
-                cur[0] += item.getQuantity();
-                cur[1] += Math.round(item.getSubtotal() * 100);
-            });
-        }
+        // 1 query GROUP BY: gop quantity + doanh thu theo product tu order_items.
+        // Truoc day load toan bo order vao memory + items lazy -> 1000+ query
+        // tren cloud -> treo -> HTTP 502. Gio chi con 1 query DB.
+        List<Object[]> rows = orderRepository.topProductsBySold(Status.CANCELLED);
 
-        return agg.entrySet().stream()
-                .sorted((a, b) -> Long.compare(b.getValue()[0], a.getValue()[0]))
+        return rows.stream()
                 .limit(TOP_N)
                 .map(e -> {
-                    var product = productRepository.findById(e.getKey()).orElse(null);
+                    Long pid = (Long) e[0];
+                    var product = productRepository.findById(pid).orElse(null);
                     if (product == null) return null;
+                    long sold = ((Number) e[1]).longValue();
+                    double revenue = ((Number) e[2]).doubleValue();
                     return new TopProduct(product.getId(), product.getName(), product.getImageUrl(),
-                            e.getValue()[0], round2(e.getValue()[1] / 100.0));
+                            sold, round2(revenue));
                 })
                 .filter(java.util.Objects::nonNull)
                 .toList();
