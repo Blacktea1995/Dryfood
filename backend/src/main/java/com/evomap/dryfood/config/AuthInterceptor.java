@@ -48,6 +48,20 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        // Cong khai: assistant chat (tra san pham, FAQ) — co token thi tra cuu đon cua chinh user
+        if (method.equals("GET") && path.startsWith("/api/assistant/")) {
+            String auth = request.getHeader("Authorization");
+            if (auth != null && auth.startsWith("Bearer ") && !auth.substring(7).trim().isEmpty()) {
+                try {
+                    User u = authenticate(request);
+                    request.setAttribute(USER_ATTR, u);
+                } catch (UnauthorizedException ignore) {
+                    // Token het han/khong hop le: van cho phép như khách, chỉ tra cứu công khai
+                }
+            }
+            return true;
+        }
+
         // Cac API con lai can dang nhap (gom ca /api/auth/me, /api/auth/logout)
         User user = authenticate(request);
 

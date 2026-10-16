@@ -4,11 +4,11 @@ import {
   ShoppingCartSimple, UserCircle, Package, MapPin, NotePencil, Tag, ArrowLeft, ArrowRight,
   Plus, Minus, X, Star, CheckCircle, WarningCircle, Info, CaretRight, MagnifyingGlass,
   Truck, ShieldCheck, Clock, Leaf, Storefront, List, Basket, Bank, TrendUp, TrendDown,
-  Users, Receipt, Percent, ChartLineUp, Export, PencilSimple, Trash, Image
+  Users, Receipt, Percent, ChartLineUp, Export, PencilSimple, Trash, Image, ChatCircle
 } from '@phosphor-icons/react';
 
 /* Phosphor icon set: one family, consistent stroke, one size scale */
-export { CheckCircle, WarningCircle, MagnifyingGlass, Truck, ShieldCheck, Clock, Leaf, Storefront, List, Basket, Bank, TrendUp, TrendDown, Users, Receipt, Percent, ChartLineUp, Export, PencilSimple, Trash, Image };
+export { CheckCircle, WarningCircle, MagnifyingGlass, Truck, ShieldCheck, Clock, Leaf, Storefront, List, Basket, Bank, TrendUp, TrendDown, Users, Receipt, Percent, ChartLineUp, Export, PencilSimple, Trash, Image, ChatCircle };
 
 export function Icon({ name, size = 18, weight = 'regular', className = '' }) {
   const Icons = {

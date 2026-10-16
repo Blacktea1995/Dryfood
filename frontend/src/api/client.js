@@ -114,6 +114,9 @@ export const api = {
   getDemandForecast: () => request('/analytics/demand'),
   getRecommendations: (productId, limit = 5) => request(`/analytics/recommend?productId=${productId}&limit=${limit}`),
 
+  // Assistant AI chat
+  assistantChat: (q) => request('/assistant/chat?q=' + encodeURIComponent(q)),
+
   // Export
   exportUrl: (kind) => '/api/export/' + kind + '.csv'
 };

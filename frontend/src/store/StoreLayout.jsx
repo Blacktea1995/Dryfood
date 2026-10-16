@@ -3,6 +3,7 @@ import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { useCart } from './CartContext.jsx';
 import CartDrawer from './CartDrawer.jsx';
+import AssistantChat from './AssistantChat.jsx';
 import { BrandMark, Icon, Storefront } from './Ui.jsx';
 
 const NAV = [
@@ -186,6 +187,7 @@ export default function StoreLayout() {
       </footer>
 
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+      <AssistantChat />
     </div>
   );
 }
