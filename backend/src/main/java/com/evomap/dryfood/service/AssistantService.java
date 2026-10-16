@@ -4,26 +4,53 @@ import com.evomap.dryfood.model.Order;
 import com.evomap.dryfood.model.Product;
 import com.evomap.dryfood.model.User;
 import com.evomap.dryfood.repository.OrderRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Tro ly AI cua DryFood: tra loi bang quy tac tren du lieu that
- * (tra san pham, tra cuu don hang cua chinh khach, FAQ giao hang/thanh toan).
- * Khong fake du lieu, khong lo thong tin khach hang khac.
+ * Tro ly AI cua DryFood.
+ *
+ * <p>Hai tang:
+ * 1) Tang quy tac (rule): tra san pham, tra cuu don hang cua chinh khach, FAQ
+ *    giao hang/thanh toan - tren du lieu that, khong bao gio bia.
+ * 2) Tang LLM (tu chon): neu bien moi truong OPENAI_API_KEY duoc dat, goi
+ *    OpenAI de viet lai cau tra loi tu nhien - NHUNG chi duoc dung cac
+ *    du kien tang 1 cung cap (products/order/ruleText), khong duoc phep bia
+ *    them. Neu loi/het han/khong co key -> tu dong dung text cua tang quy tac.
  */
 @Service
 public class AssistantService {
 
+    private static final Logger log = LoggerFactory.getLogger(AssistantService.class);
     private static final DateTimeFormatter DT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final Pattern ORDER_CODE = Pattern.compile("(?:DH|dh)?\\s*([0-9]{8,})");
+
+    // OpenAI: key doc tu bien moi truong (KHONG commit vao repo), model cau hinh duoc
+    private static final String OPENAI_KEY = System.getenv("OPENAI_API_KEY");
+    private static final String OPENAI_MODEL = System.getenv("OPENAI_MODEL") == null
+            ? "gpt-4o-mini" : System.getenv("OPENAI_MODEL");
+    private static final boolean LLM_ENABLED = OPENAI_KEY != null && !OPENAI_KEY.isBlank();
+    private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
+    private static final ObjectMapper JSON = new ObjectMapper();
+    private static final HttpClient HTTP = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(5)).build();
 
     private final ProductService productService;
     private final OrderRepository orderRepository;
@@ -52,13 +79,14 @@ public class AssistantService {
 
         // 1) Tra cuu don hang theo ma
         if (isOrderLookup(lower)) {
-            return orderAnswer(q, user);
+            Reply r = orderAnswer(q, user);
+            return polish(r, q, user);
         }
 
         // 2) FAQ: giao hang / thanh toan / ho tro
         String faq = faqAnswer(lower);
         if (faq != null) {
-            return new Reply(faq, List.of(), null, quickPrompts());
+            return polish(new Reply(faq, List.of(), null, quickPrompts()), q, user);
         }
 
         // 3) Tra san pham theo tu khoa
@@ -74,13 +102,80 @@ public class AssistantService {
             } else {
                 text = "Tôi tìm được " + found.size() + " sản phẩm phù hợp với '" + query + "'. Bạn tham khảo danh sách bên dưới nhé:";
             }
-            return new Reply(text, found.stream().map(this::hit).toList(), null, quickPrompts());
+            return polish(new Reply(text, found.stream().map(this::hit).toList(), null, quickPrompts()), q, user);
         }
 
         // 4) Khong hieu
-        return new Reply(
+        return polish(new Reply(
                 "Tôi chưa hiểu rõ câu hỏi '" + q + "'. Bạn có thể hỏi tôi về: tìm sản phẩm theo tên (ví dụ 'mì gói', 'hạt điều'), tra cứu đơn hàng theo mã, hoặc chính sách giao hàng và thanh toán. Nếu cần hỗ trợ thêm, hãy liên hệ qua trang Hồ sơ hoặc đơn hàng của bạn.",
-                List.of(), null, quickPrompts());
+                List.of(), null, quickPrompts()), q, user);
+    }
+
+    /**
+     * Tang LLM (tu chon): goi OpenAI viet lai loi van tu nhien, chi dung cac du kien
+     * co san trong Reply (text, products, order). Loi/khong co key -> giu nguyen rule text.
+     */
+    private Reply polish(Reply r, String q, User user) {
+        if (!LLM_ENABLED) return r;
+        try {
+            String ruleText = r.text();
+            String facts = "Câu hỏi khách: " + q + "\n"
+                    + "Thông tin tra cứu được từ hệ thống (KHÔNG được phép bịa thêm, chỉ diễn đạt lại):\n"
+                    + ruleText + "\n";
+            if (r.products() != null && !r.products().isEmpty()) {
+                facts = facts + "Sản phẩm tìm thấy:\n";
+                for (ProductHit p : r.products()) {
+                    facts = facts + " - " + p.name() + ": " + fmt(p.price()) + " ₫/" + p.unit()
+                            + (p.stock() > 0 ? " (còn " + p.stock() + " " + p.unit() + ")" : " (hết hàng)") + "\n";
+                }
+            }
+            if (r.order() != null) {
+                facts = facts + "Đơn hàng: mã " + r.order().orderCode()
+                        + ", trạng thái " + r.order().statusLabel()
+                        + ", tổng tiền " + fmt(r.order().totalAmount())
+                        + " ₫, ngày đặt " + r.order().createdAt() + "\n";
+            }
+            String prompt = "Bạn là trợ lý AI của cửa hàng thực phẩm khô DryFood (tiếng Việt). "
+                    + "Trả lời ngắn gọn, thân thiện, tối đa 3-4 câu, KHÔNG bịa thêm sản phẩm/giá/khuyến mãi nào ngoài dữ kiện được cung cấp. "
+                    + "Nếu dữ kiện không đủ để trả lời, nói rõ điều đó.\n\n" + facts;
+            String ai = callLLM(prompt);
+            if (ai != null && !ai.isBlank()) {
+                return new Reply(ai.trim(), r.products(), r.order(), r.quickReplies());
+            }
+        } catch (Exception e) {
+            log.info("OpenAI fallback to rule: {}", e.getMessage());
+        }
+        return r;
+    }
+
+    private String callLLM(String prompt) throws Exception {
+        // OpenAI chat completions
+        ObjectNode body = JSON.createObjectNode();
+        body.put("model", OPENAI_MODEL);
+        ArrayNode messages = body.putArray("messages");
+        ObjectNode system = messages.addObject();
+        system.put("role", "system");
+        system.put("content", "Bạn là trợ lý AI của cửa hàng thực phẩm khô DryFood. Trả lời ngắn gọn, thân thiện, tối đa 3-4 câu, bằng tiếng Việt. KHÔNG bịa thêm sản phẩm/giá/khuyến mãi nào ngoài dữ kiện được cung cấp. Nếu dữ kiện không đủ, nói rõ điều đó.");
+        ObjectNode user = messages.addObject();
+        user.put("role", "user");
+        user.put("content", prompt);
+        body.put("temperature", 0.4);
+        body.put("max_tokens", 400);
+
+        HttpRequest req = HttpRequest.newBuilder(URI.create(OPENAI_URL))
+                .timeout(Duration.ofSeconds(15))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + OPENAI_KEY)
+                .POST(HttpRequest.BodyPublishers.ofString(JSON.writeValueAsString(body)))
+                .build();
+        HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
+        if (res.statusCode() != 200) {
+            log.warn("OpenAI HTTP {}: {}", res.statusCode(), res.body().length() > 200 ? res.body().substring(0, 200) : res.body());
+            return null;
+        }
+        JsonNode root = JSON.readTree(res.body());
+        JsonNode text = root.path("choices").path(0).path("message").path("content");
+        return text.isMissingNode() || text.isNull() ? null : text.asText();
     }
 
     private Reply orderAnswer(String raw, User user) {
