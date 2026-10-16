@@ -113,6 +113,12 @@ export const api = {
   getForecast: (days = 7) => request('/analytics/forecast?days=' + days),
   getDemandForecast: () => request('/analytics/demand'),
   getAnalyticsInsights: (days = 7) => request('/analytics/insights?days=' + days),
+  getAnalyticsSnapshot: (days = 7) => request('/analytics/snapshot?days=' + days),
+  postAnalyticsRefresh: (days = 7) => request('/analytics/refresh?days=' + days, { method: 'POST' }),
+  getAnalyticsRefreshStatus: (id) => request('/analytics/refresh/' + id),
+  getSegmentCustomers: (segment, page = 0, size = 10) =>
+    request('/analytics/segments/' + encodeURIComponent(segment) + '/customers?page=' + page + '&size=' + size),
+  exportAnalyticsCsvUrl: (days = 7) => '/api/analytics/export/csv?days=' + days,
   getRecommendations: (productId, limit = 5) => request(`/analytics/recommend?productId=${productId}&limit=${limit}`),
 
   // Assistant AI chat

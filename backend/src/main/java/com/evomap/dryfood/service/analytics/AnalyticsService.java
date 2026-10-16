@@ -8,6 +8,8 @@ import com.evomap.dryfood.model.Product;
 import com.evomap.dryfood.repository.CustomerRepository;
 import com.evomap.dryfood.repository.OrderRepository;
 import com.evomap.dryfood.repository.ProductRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -34,6 +36,8 @@ import java.util.Map;
 @Service
 public class AnalyticsService {
 
+    private static final Logger log = LoggerFactory.getLogger(AnalyticsService.class);
+
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
@@ -53,6 +57,7 @@ public class AnalyticsService {
     public List<RfmSegment> rfmSegments() {
         Map<Customer, RFM> rfmMap = computeRfm();
         Map<String, long[]> seg = new LinkedHashMap<>();
+        Map<String, long[]> recencyContrib = new LinkedHashMap<>();
         for (var e : rfmMap.entrySet()) {
             String label = segmentLabel(e.getValue());
             long[] agg = seg.computeIfAbsent(label, k -> new long[4]); // count, recencySum, freqSum, monSum
@@ -60,12 +65,19 @@ public class AnalyticsService {
             agg[1] += (long) e.getValue().recency();
             agg[2] += (long) e.getValue().frequency();
             agg[3] += Math.round(e.getValue().monetary());
+            if (e.getValue().recency() >= 0) {
+                long[] rc = recencyContrib.computeIfAbsent(label, k -> new long[2]); // count, recencySum
+                rc[0] += 1;
+                rc[1] += (long) e.getValue().recency();
+            }
         }
         List<RfmSegment> out = new ArrayList<>();
         for (var e : seg.entrySet()) {
             long count = e.getValue()[0];
+            long recencyCount = recencyContrib.getOrDefault(e.getKey(), new long[2])[0];
+            long recencySum = recencyContrib.getOrDefault(e.getKey(), new long[2])[1];
             out.add(new RfmSegment(e.getKey(), count,
-                    count == 0 ? 0 : (double) e.getValue()[1] / count,
+                    recencyCount == 0 ? 0 : (double) recencySum / recencyCount,
                     count == 0 ? 0 : (double) e.getValue()[2] / count,
                     count == 0 ? 0 : (double) e.getValue()[3] / count));
         }
@@ -76,9 +88,10 @@ public class AnalyticsService {
 
     /** Gan nhan thu cho khach hang dua tren RFM. */
     public String segmentLabel(RFM rfm) {
-        double r = rfm.recency();   // ngay tu lan mua gan nhat
+        double r = rfm.recency();   // ngay tu lan mua gan nhat (-1 = chua co don)
         double f = rfm.frequency(); // so don
         double m = rfm.monetary();  // tong tien
+        if (r < 0) return "Ro bo"; // khach chua co don -> cum roi bo
         if (f >= 4 && m >= 150_000 && r <= 15) return "VIP";
         if (f >= 2 && m >= 50_000 && r <= 45) return "Trung thanh";
         if (f == 1 && r <= 30) return "Moi";
@@ -104,7 +117,7 @@ public class AnalyticsService {
                 case "VUA" -> "Gui voucher thoi han 7 ngay + nhac lai san pham da mua";
                 default -> "Giu lien lien he, gui tin moi me nha do";
             };
-            String lastOrder = rfm.recency() == Double.MAX_VALUE ? "" : LocalDate.now().minusDays((long) rfm.recency()).toString();
+            String lastOrder = rfm.recency() < 0 ? "" : LocalDate.now().minusDays((long) rfm.recency()).toString();
             out.add(new ChurnRiskCustomer(c.getId(), c.getName(), c.getEmail(), c.getPhone() == null ? "" : c.getPhone(),
                     Math.round(score * 100) / 100.0, level, sugg, lastOrder));
         }
@@ -113,7 +126,7 @@ public class AnalyticsService {
     }
 
     private double churnScore(RFM rfm) {
-        double rNorm = rfm.recency() == Double.MAX_VALUE ? 1.0 : Math.min(1.0, rfm.recency() / 90.0);
+        double rNorm = rfm.recency() < 0 ? 1.0 : Math.min(1.0, rfm.recency() / 90.0);
         double fScore = 1.0 - Math.min(1.0, rfm.frequency() / 5.0);
         double mScore = 1.0 - Math.min(1.0, rfm.monetary() / 100_000.0);
         return (rNorm * 0.5 + fScore * 0.3 + mScore * 0.2) * 100;
@@ -271,10 +284,12 @@ public class AnalyticsService {
             }
         }
         Map<Customer, RFM> out = new LinkedHashMap<>();
+        int customersWithNoOrders = 0;
         for (Customer c : customerRepository.findAll()) {
             List<Order> cs = byCustomer.getOrDefault(c.getId(), List.of());
             if (cs.isEmpty()) {
-                out.put(c, new RFM(Double.MAX_VALUE, 0, 0));
+                customersWithNoOrders++;
+                out.put(c, new RFM(-1, 0, 0));
             } else {
                 LocalDate latest = cs.stream().map(o -> o.getCreatedAt().toLocalDate()).max(LocalDate::compareTo).orElse(LocalDate.now());
                 long recency = Math.max(0, ChronoUnit.DAYS.between(latest, LocalDate.now()));
@@ -282,12 +297,22 @@ public class AnalyticsService {
                         cs.stream().mapToDouble(Order::getTotalAmount).sum()));
             }
         }
+        log.info("RFM: {} customers with no orders (excluded from avg recency), {} total customers",
+                customersWithNoOrders, out.size());
         return out;
     }
 
     /** Top san pham ban chay (gan giong DashboardService.topProducts). */
     public List<TopProduct> topProducts() {
         return topProductsInternal();
+    }
+
+    /** Map customerId -> RFM (de phong to cum khach theo cum). */
+    public Map<Long, RFM> rfmByCustomer() {
+        Map<Customer, RFM> m = computeRfm();
+        Map<Long, RFM> out = new LinkedHashMap<>();
+        m.forEach((c, r) -> out.put(c.getId(), r));
+        return out;
     }
 
     private List<TopProduct> topProductsInternal() {

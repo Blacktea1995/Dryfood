@@ -60,6 +60,24 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o WHERE o.status = :status")
     double sumTotalByStatus(@Param("status") Status status);
 
+    /** Doanh thu + so don theo ngay (GROUP BY DATE), gioi han N ngay gan nhat. */
+    @Query(value = "SELECT DATE(o.created_at), SUM(o.total_amount), COUNT(o.id) FROM orders o " +
+            "WHERE o.status <> :excluded AND o.created_at >= :from " +
+            "GROUP BY DATE(o.created_at) ORDER BY DATE(o.created_at) DESC LIMIT :limit", nativeQuery = true)
+    List<Object[]> revenueByDay(@Param("from") LocalDateTime from,
+                                @Param("excluded") String excluded,
+                                @Param("limit") int limit);
+
+    /** Doanh thu theo danh muc (GROUP BY category). */
+    @Query("SELECT p.category, SUM(oi.price * oi.quantity) FROM OrderItem oi " +
+            "JOIN oi.product p WHERE oi.order.status <> :excluded AND p.category IS NOT NULL " +
+            "GROUP BY p.category")
+    List<Object[]> revenueByCategory(@Param("excluded") Status excluded);
+
+    /** Dem so don theo tung trang thai. */
+    @Query("SELECT o.status, COUNT(o) FROM Order o GROUP BY o.status")
+    List<Object[]> countByStatusAll();
+
     /**
      * Top san pham ban chay: gop quantity + doanh thu theo product tu order_items
      * (bo don CANCELLED), 1 query GROUP BY thay vi load toan bo order vao memory
