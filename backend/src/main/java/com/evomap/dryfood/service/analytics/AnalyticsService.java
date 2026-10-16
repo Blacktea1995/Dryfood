@@ -286,6 +286,10 @@ public class AnalyticsService {
     }
 
     /** Top san pham ban chay (gan giong DashboardService.topProducts). */
+    public List<TopProduct> topProducts() {
+        return topProductsInternal();
+    }
+
     private List<TopProduct> topProductsInternal() {
         Map<Long, long[]> agg = new LinkedHashMap<>(); // productId -> {sold, rev}
         for (Order o : orderRepository.findAllWithItems()) {

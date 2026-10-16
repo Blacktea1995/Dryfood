@@ -23,6 +23,7 @@ export default function Analytics() {
   const [churn, setChurn] = useState([]);
   const [forecast, setForecast] = useState([]);
   const [demand, setDemand] = useState([]);
+  const [insight, setInsight] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [days, setDays] = useState(7);
@@ -33,16 +34,18 @@ export default function Analytics() {
     try {
       setError('');
       setLoading(true);
-      const [s, c, f, d] = await Promise.all([
+      const [s, c, f, d, ins] = await Promise.all([
         api.getRfmSegments(),
         api.getChurnRisk(),
         api.getForecast(days),
-        api.getDemandForecast()
+        api.getDemandForecast(),
+        api.getAnalyticsInsights(days)
       ]);
       setSegments(s);
       setChurn(c);
       setForecast(f);
       setDemand(d);
+      setInsight(ins);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -63,6 +66,23 @@ export default function Analytics() {
       </div>
 
       {error && <div className="bg-rose-50 border border-rose-200 text-danger rounded-card p-4 text-sm">{error}</div>}
+
+      {/* AI Insight (OpenAI nếu có key + credit, fallback rule nếu không) */}
+      {!loading && insight && (
+        <div className="rounded-card border border-forest-200 bg-forest-50 p-6 shadow-sm">
+          <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
+            <h2 className="font-bold text-ink inline-flex items-center gap-2">
+              <Icon name="CaretRight" size={18} className="text-forest-700" />
+              AI nhận định & khuyến nghị
+            </h2>
+            <span className={`inline-flex items-center gap-1 text-[11px] font-semibold rounded-full px-2.5 py-1 ${insight.useLLM ? 'bg-emerald-100 text-emerald-800' : 'bg-bone-200 text-ink-soft'}`}>
+              <Icon name={insight.useLLM ? 'CheckCircle' : 'Info'} size={12} />
+              {insight.useLLM ? `AI thật (${insight.source})` : 'Phân tích trong Java (rule)'}
+            </span>
+          </div>
+          <p className="text-sm leading-relaxed text-ink whitespace-pre-wrap">{insight.text}</p>
+        </div>
+      )}
 
       {loading ? (
         <div className="text-center text-ink-faint py-20 animate-pulse">Đang tính toán...</div>

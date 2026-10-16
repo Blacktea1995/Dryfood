@@ -112,6 +112,7 @@ export const api = {
   getChurnRisk: () => request('/analytics/churn'),
   getForecast: (days = 7) => request('/analytics/forecast?days=' + days),
   getDemandForecast: () => request('/analytics/demand'),
+  getAnalyticsInsights: (days = 7) => request('/analytics/insights?days=' + days),
   getRecommendations: (productId, limit = 5) => request(`/analytics/recommend?productId=${productId}&limit=${limit}`),
 
   // Assistant AI chat

@@ -1,6 +1,7 @@
 package com.evomap.dryfood.controller;
 
 import com.evomap.dryfood.service.analytics.AnalyticsService;
+import com.evomap.dryfood.service.analytics.AnalyticsInsightsService;
 import com.evomap.dryfood.service.analytics.ChurnRiskCustomer;
 import com.evomap.dryfood.service.analytics.DemandForecast;
 import com.evomap.dryfood.service.analytics.ForecastPoint;
@@ -19,9 +20,12 @@ import java.util.List;
 public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
+    private final AnalyticsInsightsService insightsService;
 
-    public AnalyticsController(AnalyticsService analyticsService) {
+    public AnalyticsController(AnalyticsService analyticsService,
+                               AnalyticsInsightsService insightsService) {
         this.analyticsService = analyticsService;
+        this.insightsService = insightsService;
     }
 
     /** Phan cum RFM cua khach hang. */
@@ -53,5 +57,11 @@ public class AnalyticsController {
     public List<Recommendation> recommend(@RequestParam Long productId,
                                           @RequestParam(defaultValue = "5") int limit) {
         return analyticsService.recommendForProduct(productId, limit);
+    }
+
+    /** AI insights: tom tat nhan dinh + khuyen nghi (OpenAI neu co key, fallback rule). */
+    @GetMapping("/insights")
+    public AnalyticsInsightsService.Insight insights(@RequestParam(defaultValue = "7") int days) {
+        return insightsService.generate(days);
     }
 }
