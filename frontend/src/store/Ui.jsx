@@ -168,23 +168,37 @@ export function EmptyState({ icon = 'Package', title = 'Không có dữ liệu',
   );
 }
 
+/* Product image: real photo when available, otherwise a neutral icon
+   placeholder (no external demo images). */
+export function ProductImage({ src, name = '', className = 'w-14 h-14 rounded-control' }) {
+  const hasImg = src && src.trim().length > 0;
+  return (
+    <div className={`bg-bone-100 flex items-center justify-center overflow-hidden shrink-0 ${className}`}>
+      {hasImg ? (
+        <img
+          src={src}
+          alt={name}
+          loading="lazy"
+          className="w-full h-full object-cover"
+          onError={e => { e.currentTarget.style.display = 'none'; }}
+        />
+      ) : (
+        <Icon name="Package" size={24} className="text-ink-faint" aria-hidden="true" />
+      )}
+    </div>
+  );
+}
+
 /* Product card: the bread-and-butter of a selling storefront.
    Image, category, name, rating, price, stock state, add-to-cart. */
-export function ProductCard({ product, onAdd, added = false, fallbackImg }) {
+export function ProductCard({ product, onAdd, added = false }) {
   const out = product.stock <= 0;
   const low = product.stock > 0 && product.stock <= 10;
-  const img = product.imageUrl || fallbackImg(product.name);
 
   return (
     <article className="group relative rounded-card border border-line bg-surface-raised overflow-hidden hover:shadow-lift hover:border-line-strong transition-all flex flex-col">
       <Link to={`/store/product/${product.id}`} className="block relative aspect-square bg-bone-100 overflow-hidden" aria-label={product.name}>
-        <img
-          src={img}
-          alt={product.name}
-          loading="lazy"
-          className="img-zoom w-full h-full object-cover"
-          onError={e => { e.currentTarget.src = fallbackImg(product.name); }}
-        />
+        <ProductImage src={product.imageUrl} name={product.name} className="w-full h-full" />
         {/* Stock ribbon (real semantic state, one per card) */}
         {out ? (
           <span className="absolute top-2 left-2 rounded-full bg-forest-950/85 text-bone-50 px-2.5 py-1 text-[11px] font-bold">

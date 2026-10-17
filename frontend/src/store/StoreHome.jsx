@@ -3,13 +3,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../api/client.js';
 import { useCart } from './CartContext.jsx';
 import { fmtVND } from '../utils/format.js';
-import { Icon, ProductCard, CategoryChip, EmptyState, SectionHeading, Truck, ShieldCheck, Clock, Leaf } from './Ui.jsx';
-
-const FALLBACK_IMG = (name) => `https://picsum.photos/seed/${encodeURIComponent(name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}/600/600`;
-
-/* Hero visual: stable picsum seed evoking a dried-food market scene.
-   Marked as placeholder in comments; replace with real photography later. */
-const HERO_IMG = 'https://picsum.photos/seed/dried-food-market-basket/1200/900';
+import { Icon, ProductCard, CategoryChip, EmptyState, SectionHeading, Truck, ShieldCheck, Clock, Leaf, Basket } from './Ui.jsx';
 
 export default function StoreHome() {
   const [products, setProducts] = useState([]);
@@ -84,13 +78,10 @@ export default function StoreHome() {
             </Link>
           </div>
         </div>
-        <div className="relative min-h-[240px] md:min-h-full overflow-hidden">
-          <img
-            src={HERO_IMG}
-            alt="Rổ thực phẩm khô tươi ngon"
-            loading="eager"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+        <div className="relative min-h-[240px] md:min-h-full overflow-hidden bg-gradient-to-br from-forest-800 via-forest-900 to-forest-950">
+          <div aria-hidden="true" className="absolute inset-0 grid place-items-center opacity-90">
+            <Basket size={110} weight="duotone" className="text-amber-brand/70" />
+          </div>
           <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-forest-950/50 via-transparent to-transparent" />
         </div>
       </section>
@@ -186,7 +177,6 @@ export default function StoreHome() {
                 product={p}
                 onAdd={handleAdd}
                 added={addedId === p.id}
-                fallbackImg={FALLBACK_IMG}
               />
             ))}
           </div>

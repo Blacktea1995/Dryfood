@@ -126,7 +126,7 @@ public class DataSeeder implements CommandLineRunner {
         for (String[] p : base) {
             list.add(new Product(p[0], p[1], p[2], p[3],
                     Double.parseDouble(p[4]), Integer.parseInt(p[5]), p[6],
-                    "/images/" + slug(p[1]) + ".jpg"));
+                    ""));
         }
 
         list.addAll(buildAdditionalProducts(150, 16));
@@ -167,7 +167,7 @@ public class DataSeeder implements CommandLineRunner {
                 String sku = "DF-" + String.format("%03d", idx);
                 out.add(new Product(name, sku, category, unit, price, stock,
                         "Thuc pham kho " + name.toLowerCase().trim() + " chon loc, an toan ve sinh",
-                        "/images/" + slug(sku) + ".jpg"));
+                        ""));
                 idx++;
             }
         }
@@ -472,10 +472,5 @@ public class DataSeeder implements CommandLineRunner {
         } catch (Exception e) {
             throw new RuntimeException("Khong the hash mat khau admin", e);
         }
-    }
-
-    private String slug(String s) {
-        String lower = s.toLowerCase().replace(" ", "-");
-        return lower.replaceAll("[^a-z0-9-]", "");
     }
 }

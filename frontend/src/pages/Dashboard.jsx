@@ -5,7 +5,7 @@ import BarChart from '../components/BarChart.jsx';
 import DonutChart from '../components/DonutChart.jsx';
 import StatusBadge, { LABELS } from '../components/StatusBadge.jsx';
 import { fmtVND, fmtDate } from '../utils/format.js';
-import { Icon } from '../store/Ui.jsx';
+import { Icon, ProductImage } from '../store/Ui.jsx';
 
 export default function Dashboard() {
   const [summary, setSummary] = useState(null);
@@ -118,12 +118,7 @@ export default function Dashboard() {
                 <span className="w-6 h-6 rounded-full bg-amber-brand/15 text-amber-deep text-xs font-bold grid place-items-center shrink-0 tabular">
                   {i + 1}
                 </span>
-                <img
-                  src={p.imageUrl || ''}
-                  alt={p.name}
-                  className="w-10 h-10 rounded-control object-cover bg-bone-100 shrink-0"
-                  onError={e => { e.target.style.display = 'none'; }}
-                />
+                <ProductImage src={p.imageUrl} name={p.name} className="w-10 h-10 rounded-control" />
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-semibold text-ink truncate">{p.name}</div>
                   <div className="text-xs text-ink-faint">Đã bán {p.sold} sản phẩm</div>
@@ -143,12 +138,7 @@ export default function Dashboard() {
           <div className="space-y-2">
             {lowStock.map(p => (
               <div key={p.id} className="flex items-center gap-3 py-2 border-b border-line last:border-0">
-                <img
-                  src={p.imageUrl || ''}
-                  alt={p.name}
-                  className="w-10 h-10 rounded-control object-cover bg-bone-100 shrink-0"
-                  onError={e => { e.target.style.display = 'none'; }}
-                />
+                <ProductImage src={p.imageUrl} name={p.name} className="w-10 h-10 rounded-control" />
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-semibold text-ink truncate">{p.name}</div>
                   <div className="text-xs text-ink-faint">{p.category || '-'}</div>

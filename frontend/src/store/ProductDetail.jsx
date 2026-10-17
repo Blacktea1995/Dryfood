@@ -4,9 +4,7 @@ import { api } from '../api/client.js';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { useCart } from './CartContext.jsx';
 import { fmtVND } from '../utils/format.js';
-import { Icon, Stars, BackLink, BtnPrimary, BtnGhost, SectionHeading, EmptyState } from './Ui.jsx';
-
-const FALLBACK_IMG = (name) => `https://picsum.photos/seed/${encodeURIComponent(name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}/600/600`;
+import { Icon, Stars, BackLink, BtnPrimary, BtnGhost, SectionHeading, EmptyState, ProductImage } from './Ui.jsx';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -102,23 +100,12 @@ export default function ProductDetail() {
         {/* Gallery */}
         <div className="space-y-3">
           <div className="rounded-card border border-line bg-surface-raised overflow-hidden aspect-square">
-            <img
-              src={product.imageUrl || FALLBACK_IMG(product.name)}
-              alt={product.name}
-              className="w-full h-full object-cover"
-              onError={e => { e.currentTarget.src = FALLBACK_IMG(product.name); }}
-            />
+            <ProductImage src={product.imageUrl} name={product.name} className="w-full h-full" />
           </div>
           <div className="grid grid-cols-4 gap-3">
             {[0, 1, 2, 3].map(i => (
               <div key={i} className={`rounded-control border overflow-hidden aspect-square bg-bone-100 ${i === 0 ? 'border-forest-600 ring-1 ring-forest-600' : 'border-line'}`}>
-                <img
-                  src={product.imageUrl || FALLBACK_IMG(product.name)}
-                  alt=""
-                  loading="lazy"
-                  className="w-full h-full object-cover opacity-70"
-                  onError={e => { e.currentTarget.style.display = 'none'; }}
-                />
+                <ProductImage src={product.imageUrl} name="" className="w-full h-full opacity-70" />
               </div>
             ))}
           </div>
@@ -282,13 +269,7 @@ export default function ProductDetail() {
                 className="group rounded-card border border-line overflow-hidden hover:shadow-lift hover:border-line-strong transition-all bg-surface-raised"
               >
                 <div className="aspect-square bg-bone-100 overflow-hidden">
-                  <img
-                    src={r.imageUrl || FALLBACK_IMG(r.name)}
-                    alt={r.name}
-                    loading="lazy"
-                    className="img-zoom w-full h-full object-cover"
-                    onError={e => { e.currentTarget.src = FALLBACK_IMG(r.name); }}
-                  />
+                  <ProductImage src={r.imageUrl} name={r.name} className="w-full h-full img-zoom" />
                 </div>
                 <div className="p-3.5">
                   <div className="text-sm font-semibold text-ink truncate group-hover:text-forest-700 transition-colors">{r.name}</div>

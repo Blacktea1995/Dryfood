@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api/client.js';
-import { Icon } from '../store/Ui.jsx';
+import { Icon, ProductImage } from '../store/Ui.jsx';
 import Modal from '../components/Modal.jsx';
 import { fmtVND } from '../utils/format.js';
 
@@ -178,12 +178,7 @@ export default function Products() {
                 <tr key={p.id} className="hairline hover:bg-bone-50/60">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={p.imageUrl || ''}
-                        alt={p.name}
-                        className="w-11 h-11 rounded-control object-cover bg-bone-100 shrink-0"
-                        onError={e => { e.target.style.display = 'none'; }}
-                      />
+                      <ProductImage src={p.imageUrl} name={p.name} className="w-11 h-11 rounded-control" />
                       <div>
                         <div className="font-semibold text-ink">{p.name}</div>
                         {p.description && <div className="text-xs text-ink-faint max-w-[220px] truncate">{p.description}</div>}
@@ -307,14 +302,9 @@ export default function Products() {
               <div className="flex items-start gap-3">
                 <div className="w-16 h-16 rounded-card bg-bone-100 border border-line flex items-center justify-center overflow-hidden shrink-0">
                   {form.imageUrl ? (
-                    <img
-                      src={form.imageUrl}
-                      alt="Xem truoc"
-                      className="w-full h-full object-cover"
-                      onError={e => { e.target.style.display = 'none'; }}
-                    />
+                    <ProductImage src={form.imageUrl} name="Xem truoc" className="w-full h-full" />
                   ) : (
-                    <Icon name="Image" size={26} className="text-bone-50/80" aria-hidden="true" />
+                    <Icon name="Image" size={26} className="text-ink-faint" aria-hidden="true" />
                   )}
                 </div>
                 <input

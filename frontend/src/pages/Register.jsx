@@ -3,8 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { BrandMark, Leaf, Icon } from '../store/Ui.jsx';
 
-const SIDE_IMG = 'https://picsum.photos/seed/dryfood-market-herbs/1000/1400';
-
 const EMPTY = { name: '', email: '', phone: '', address: '', password: '', confirm: '' };
 
 export default function Register() {
@@ -50,9 +48,11 @@ export default function Register() {
 
   return (
     <div className="min-h-screen grid md:grid-cols-2 bg-surface">
-      {/* Brand side */}
-      <div className="relative hidden md:block overflow-hidden">
-        <img src={SIDE_IMG} alt="" className="absolute inset-0 w-full h-full object-cover" />
+      {/* Brand side: neutral forest panel, no external demo photo */}
+      <div className="relative hidden md:block overflow-hidden bg-gradient-to-br from-forest-800 via-forest-900 to-forest-950">
+        <div aria-hidden="true" className="absolute inset-0 grid place-items-center opacity-80">
+          <Icon name="Storefront" size={180} weight="duotone" className="text-amber-brand/60" />
+        </div>
         <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-forest-950 via-forest-950/40 to-forest-950/20" />
         <div className="relative z-10 h-full flex flex-col justify-between p-10 text-bone-50">
           <BrandMark light />
