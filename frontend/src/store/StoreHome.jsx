@@ -1,9 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../api/client.js';
 import { useCart } from './CartContext.jsx';
 import { fmtVND } from '../utils/format.js';
-import { Icon, ProductCard, CategoryChip, EmptyState, SectionHeading, Truck, ShieldCheck, Clock, Leaf, Basket } from './Ui.jsx';
+import { Icon, ProductCard, CategoryChip, EmptyState, SectionHeading, CategoryTile, Truck, ShieldCheck, Clock } from './Ui.jsx';
+import { HERO_IMAGE } from './productImages.js';
+
+const CATEGORY_ORDER = ['Mi - bun', 'Thit', 'Hai san', 'Hat - an vat', 'Trai cay kho', 'Rau cu', 'Gia vi', 'Banh keo'];
 
 export default function StoreHome() {
   const [products, setProducts] = useState([]);
@@ -13,6 +16,15 @@ export default function StoreHome() {
   const [error, setError] = useState('');
   const { addItem } = useCart();
   const [addedId, setAddedId] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Sync from URL (header search / category links land here)
+  useEffect(() => {
+    const qp = searchParams.get('q') || '';
+    const cp = searchParams.get('category') || '';
+    setQ(qp);
+    setCategory(cp);
+  }, [searchParams]);
 
   useEffect(() => {
     load();
@@ -42,6 +54,19 @@ export default function StoreHome() {
     return products.filter(p => p.category === category);
   }, [products, category]);
 
+  const countsByCategory = useMemo(() => {
+    const m = {};
+    products.forEach(p => { if (p.category) m[p.category] = (m[p.category] || 0) + 1; });
+    return m;
+  }, [products]);
+
+  function pickCategory(cat) {
+    setCategory(cat);
+    const next = new URLSearchParams(searchParams);
+    if (cat) next.set('category', cat); else next.delete('category');
+    setSearchParams(next, { replace: true });
+  }
+
   function handleAdd(product) {
     if (product.stock <= 0) return;
     addItem(product, 1);
@@ -51,7 +76,7 @@ export default function StoreHome() {
 
   return (
     <div className="space-y-14">
-      {/* Hero: split-screen, real visual right, message left, CTA visible in viewport */}
+      {/* Hero: split-screen, real market photo right, message left, CTA visible */}
       <section className="grid md:grid-cols-2 items-stretch rounded-card overflow-hidden bg-forest-900 text-bone-50 shadow-lift">
         <div className="p-8 md:p-12 lg:p-14 flex flex-col justify-center">
           <h1 className="display text-3xl md:text-4xl lg:text-5xl text-bone-50">
@@ -78,11 +103,18 @@ export default function StoreHome() {
             </Link>
           </div>
         </div>
-        <div className="relative min-h-[240px] md:min-h-full overflow-hidden bg-gradient-to-br from-forest-800 via-forest-900 to-forest-950">
-          <div aria-hidden="true" className="absolute inset-0 grid place-items-center opacity-90">
-            <Basket size={110} weight="duotone" className="text-amber-brand/70" />
-          </div>
-          <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-forest-950/50 via-transparent to-transparent" />
+        <div className="relative min-h-[240px] md:min-h-full overflow-hidden">
+          <img
+            src={HERO_IMAGE.src}
+            alt="Chợ thực phẩm khô tươi"
+            className="absolute inset-0 w-full h-full object-cover"
+            onError={e => {
+              const el = e.currentTarget;
+              if (el.src !== HERO_IMAGE.fallback) el.src = HERO_IMAGE.fallback;
+              else { el.style.opacity = '0.35'; el.style.filter = 'none'; }
+            }}
+          />
+          <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-forest-950/60 via-forest-950/10 to-forest-900/20" />
         </div>
       </section>
 
@@ -103,8 +135,27 @@ export default function StoreHome() {
         ))}
       </section>
 
+      {/* Category showcase: bento of real photos, entry to each family */}
+      <section id="danh-muc" aria-label="Danh mục sản phẩm">
+        <SectionHeading
+          title="Danh mục sản phẩm"
+          sub="Chọn theo nhóm thực phẩm bạn cần cho bữa ăn mỗi ngày"
+        />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          {CATEGORY_ORDER.map((cat, i) => (
+            <CategoryTile
+              key={cat}
+              category={cat}
+              count={countsByCategory[cat]}
+              onClick={() => pickCategory(cat)}
+              className={i === 0 ? 'md:col-span-2 md:row-span-1' : ''}
+            />
+          ))}
+        </div>
+      </section>
+
       {/* Search + category filter */}
-      <section id="danh-muc" className="space-y-4" aria-label="Tìm và lọc sản phẩm">
+      <section className="space-y-4" aria-label="Tìm và lọc sản phẩm">
         <div className="bg-surface-raised rounded-card border border-line p-4">
           <div className="relative max-w-xl">
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-faint">
@@ -112,16 +163,21 @@ export default function StoreHome() {
             </span>
             <input
               value={q}
-              onChange={e => setQ(e.target.value)}
+              onChange={e => {
+                setQ(e.target.value);
+                const next = new URLSearchParams(searchParams);
+                if (e.target.value) next.set('q', e.target.value); else next.delete('q');
+                setSearchParams(next, { replace: true });
+              }}
               placeholder="Tìm sản phẩm..."
               className="w-full pl-10 pr-4 py-3 rounded-control border border-line-strong bg-surface text-ink text-sm placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-forest-500"
             />
           </div>
         </div>
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1" role="group" aria-label="Chọn danh mục">
-          <CategoryChip active={!category} onClick={() => setCategory('')}>Tất cả</CategoryChip>
+          <CategoryChip active={!category} onClick={() => pickCategory('')}>Tất cả</CategoryChip>
           {categories.map(c => (
-            <CategoryChip key={c} active={category === c} onClick={() => setCategory(c)}>
+            <CategoryChip key={c} active={category === c} onClick={() => pickCategory(c)}>
               {c}
             </CategoryChip>
           ))}
@@ -162,7 +218,7 @@ export default function StoreHome() {
             sub="Thử từ khoá khác hoặc bỏ bộ lọc danh mục nhé."
             action={
               <button
-                onClick={() => { setQ(''); setCategory(''); }}
+                onClick={() => { setQ(''); setCategory(''); setSearchParams({}, { replace: true }); }}
                 className="inline-flex items-center gap-1.5 rounded-control bg-forest-800 hover:bg-forest-700 text-bone-50 px-5 py-2.5 text-sm font-bold transition-colors"
               >
                 Xem tất cả sản phẩm

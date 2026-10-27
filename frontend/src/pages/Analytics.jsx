@@ -197,7 +197,7 @@ export default function Analytics() {
       {/* Status bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-ink">Phân tích &amp; AI</h1>
+          <h1 className="display text-2xl text-ink">Phân tích &amp; AI</h1>
           <p className="text-sm text-ink-faint mt-1">
             {snapshot
               ? isAI

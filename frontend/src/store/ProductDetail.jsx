@@ -31,14 +31,16 @@ export default function ProductDetail() {
   async function load() {
     try {
       setLoading(true);
-      const [p, r, rec] = await Promise.all([
+      const [p, r] = await Promise.all([
         api.getProduct(id),
-        api.getReviews(id),
-        api.getRecommendations(id, 4)
+        api.getReviews(id)
       ]);
       setProduct(p);
       setReviews(r);
-      setRecommendations(rec);
+      // Recommendations are auxiliary: a failure here must never sink the page.
+      api.getRecommendations(id, 4)
+        .then(setRecommendations)
+        .catch(() => setRecommendations([]));
     } catch (e) {
       setError(e.message);
     } finally {
@@ -100,12 +102,12 @@ export default function ProductDetail() {
         {/* Gallery */}
         <div className="space-y-3">
           <div className="rounded-card border border-line bg-surface-raised overflow-hidden aspect-square">
-            <ProductImage src={product.imageUrl} name={product.name} className="w-full h-full" />
+            <ProductImage product={product} name={product.name} className="w-full h-full" />
           </div>
           <div className="grid grid-cols-4 gap-3">
             {[0, 1, 2, 3].map(i => (
               <div key={i} className={`rounded-control border overflow-hidden aspect-square bg-bone-100 ${i === 0 ? 'border-forest-600 ring-1 ring-forest-600' : 'border-line'}`}>
-                <ProductImage src={product.imageUrl} name="" className="w-full h-full opacity-70" />
+                <ProductImage product={product} name="" className="w-full h-full opacity-70" />
               </div>
             ))}
           </div>
@@ -269,7 +271,7 @@ export default function ProductDetail() {
                 className="group rounded-card border border-line overflow-hidden hover:shadow-lift hover:border-line-strong transition-all bg-surface-raised"
               >
                 <div className="aspect-square bg-bone-100 overflow-hidden">
-                  <ProductImage src={r.imageUrl} name={r.name} className="w-full h-full img-zoom" />
+                  <ProductImage src={r.imageUrl} product={r} name={r.name} className="w-full h-full img-zoom" />
                 </div>
                 <div className="p-3.5">
                   <div className="text-sm font-semibold text-ink truncate group-hover:text-forest-700 transition-colors">{r.name}</div>

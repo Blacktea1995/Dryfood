@@ -24,20 +24,9 @@ export default function KpiCard({ label, value, changePct = null, sparkData = []
   const Arrow = changePct === null ? Minus : changePct >= 0 ? TrendUp : TrendDown;
   const arrowColor = changePct === null ? 'text-ink-faint' : changePct >= 0 ? 'text-emerald-600' : 'text-rose-600';
 
-  const accentDot = {
-    forest: 'bg-forest-700',
-    amber: 'bg-amber-brand',
-    rose: 'bg-rose-600',
-    emerald: 'bg-emerald-600',
-    sky: 'bg-sky-600'
-  }[accent] || 'bg-forest-700';
-
   return (
     <div className="bg-surface-raised rounded-card border border-line shadow-sm p-4 min-w-0 hover:shadow-lift transition-shadow">
-      <div className="flex items-start justify-between gap-2 min-w-0">
-        <p className="text-xs font-semibold text-ink-soft truncate" title={label}>{label}</p>
-        <span className={`shrink-0 w-2 h-2 rounded-full ${accentDot} mt-1`} aria-hidden="true" />
-      </div>
+      <p className="text-xs font-semibold text-ink-soft truncate" title={label}>{label}</p>
       <p
         className="mt-1 font-extrabold text-ink tabular leading-none text-[clamp(1.05rem,2.1vw,1.55rem)]"
         title={currency ? (Number(value) || 0).toLocaleString('vi-VN', { maximumFractionDigits: 0 }) + ' ₫' : (Number(value) || 0).toLocaleString('vi-VN')}

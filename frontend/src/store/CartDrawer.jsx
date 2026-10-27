@@ -4,6 +4,7 @@ import { useAuth } from '../auth/AuthContext.jsx';
 import { useCart } from './CartContext.jsx';
 import { fmtVND } from '../utils/format.js';
 import { Icon, BtnPrimary, EmptyState } from './Ui.jsx';
+import { productImageUrl, productImageFallback } from './productImages.js';
 
 /* Free-shipping threshold: real store convention, functional signal */
 const FREE_SHIP = 200000;
@@ -89,7 +90,19 @@ export default function CartDrawer({ open, onClose }) {
                   {item.imageUrl ? (
                     <img src={item.imageUrl} alt="" className="w-full h-full object-cover" onError={e => { e.target.style.display = 'none'; }} />
                   ) : (
-                    <Icon name="Package" size={24} className="text-ink-faint" />
+                    <img
+                      src={productImageUrl(item)}
+                      alt=""
+                      className="w-full h-full object-cover"
+                      onError={e => {
+                        const img = e.currentTarget;
+                        if (img.src !== productImageFallback(item)) {
+                          img.src = productImageFallback(item);
+                        } else {
+                          img.style.display = 'none';
+                        }
+                      }}
+                    />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">

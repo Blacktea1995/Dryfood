@@ -6,6 +6,7 @@ import {
   Truck, ShieldCheck, Clock, Leaf, Storefront, List, Basket, Bank, TrendUp, TrendDown,
   Users, Receipt, Percent, ChartLineUp, Export, PencilSimple, Trash, Image, ChatCircle
 } from '@phosphor-icons/react';
+import { productImageUrl, productImageFallback, categoryImage } from './productImages.js';
 
 /* Phosphor icon set: one family, consistent stroke, one size scale */
 export { CheckCircle, WarningCircle, MagnifyingGlass, Truck, ShieldCheck, Clock, Leaf, Storefront, List, Basket, Bank, TrendUp, TrendDown, Users, Receipt, Percent, ChartLineUp, Export, PencilSimple, Trash, Image, ChatCircle };
@@ -168,10 +169,11 @@ export function EmptyState({ icon = 'Package', title = 'Không có dữ liệu',
   );
 }
 
-/* Product image: real photo when available, otherwise a neutral icon
-   placeholder (no external demo images). */
-export function ProductImage({ src, name = '', className = 'w-14 h-14 rounded-control' }) {
+/* Product image: real photo when available, otherwise a category photo with a
+   stable fallback chain, then a neutral icon. No broken tiles, no fake previews. */
+export function ProductImage({ src, product = null, name = '', className = 'w-14 h-14 rounded-control', zoom = false }) {
   const hasImg = src && src.trim().length > 0;
+  const fallbackUrl = product ? productImageFallback(product) : null;
   return (
     <div className={`bg-bone-100 flex items-center justify-center overflow-hidden shrink-0 ${className}`}>
       {hasImg ? (
@@ -179,8 +181,31 @@ export function ProductImage({ src, name = '', className = 'w-14 h-14 rounded-co
           src={src}
           alt={name}
           loading="lazy"
-          className="w-full h-full object-cover"
-          onError={e => { e.currentTarget.style.display = 'none'; }}
+          className={`w-full h-full object-cover ${zoom ? 'img-zoom' : ''}`}
+          onError={e => {
+            // Step down the chain: explicit URL -> category photo -> hide -> icon
+            const img = e.currentTarget;
+            if (fallbackUrl && img.src !== fallbackUrl) {
+              img.src = fallbackUrl;
+            } else {
+              img.style.display = 'none';
+            }
+          }}
+        />
+      ) : product ? (
+        <img
+          src={productImageUrl(product)}
+          alt={name}
+          loading="lazy"
+          className={`w-full h-full object-cover ${zoom ? 'img-zoom' : ''}`}
+          onError={e => {
+            const img = e.currentTarget;
+            if (img.src !== fallbackUrl) {
+              img.src = fallbackUrl;
+            } else {
+              img.style.display = 'none';
+            }
+          }}
         />
       ) : (
         <Icon name="Package" size={24} className="text-ink-faint" aria-hidden="true" />
@@ -198,7 +223,7 @@ export function ProductCard({ product, onAdd, added = false }) {
   return (
     <article className="group relative rounded-card border border-line bg-surface-raised overflow-hidden hover:shadow-lift hover:border-line-strong transition-all flex flex-col">
       <Link to={`/store/product/${product.id}`} className="block relative aspect-square bg-bone-100 overflow-hidden" aria-label={product.name}>
-        <ProductImage src={product.imageUrl} name={product.name} className="w-full h-full" />
+        <ProductImage product={product} name={product.name} className="w-full h-full img-zoom" />
         {/* Stock ribbon (real semantic state, one per card) */}
         {out ? (
           <span className="absolute top-2 left-2 rounded-full bg-forest-950/85 text-bone-50 px-2.5 py-1 text-[11px] font-bold">
@@ -270,4 +295,36 @@ export function ProductCard({ product, onAdd, added = false }) {
 
 function fmtVNDLocal(v) {
   return new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 0 }).format(v);
+}
+
+/* Category showcase tile: real photo, name, count. Used on the storefront
+   home as a bento-style entry into each product family. */
+export function CategoryTile({ category, count, onClick, className = '' }) {
+  const img = categoryImage(category);
+  return (
+    <button
+      onClick={onClick}
+      aria-label={`Xem danh mục ${category}`}
+      className={`group relative overflow-hidden rounded-card border border-line bg-forest-900 text-left transition-all hover:shadow-lift hover:border-line-strong active:scale-[0.99] ${className}`}
+    >
+      <img
+        src={img.src}
+        alt=""
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-500 ease-[var(--ease-out-exp)] group-hover:scale-[1.05]"
+        onError={e => {
+          const el = e.currentTarget;
+          if (el.src !== img.fallback) el.src = img.fallback;
+          else el.style.display = 'none';
+        }}
+      />
+      <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-forest-950/85 via-forest-950/25 to-transparent" />
+      <span className="relative z-10 block p-4 md:p-5 pt-16 md:pt-20">
+        <span className="block font-bold text-bone-50 text-sm md:text-base drop-shadow-sm">{category}</span>
+        {count !== undefined && (
+          <span className="block text-xs text-bone-50/70 mt-0.5 tabular">{count} sản phẩm</span>
+        )}
+      </span>
+    </button>
+  );
 }

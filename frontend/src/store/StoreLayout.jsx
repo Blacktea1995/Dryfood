@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { useCart } from './CartContext.jsx';
 import CartDrawer from './CartDrawer.jsx';
@@ -32,10 +32,20 @@ export default function StoreLayout() {
   const { count } = useCart();
   const navigate = useNavigate();
   const [cartOpen, setCartOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [searchParams] = useSearchParams();
 
   async function handleLogout() {
     await logout();
     navigate('/login', { replace: true });
+  }
+
+  function submitSearch(e) {
+    e.preventDefault();
+    const q = search.trim();
+    const params = new URLSearchParams(searchParams);
+    if (q) params.set('q', q); else params.delete('q');
+    navigate('/store?' + params.toString());
   }
 
   const navClass = ({ isActive }) =>
@@ -64,6 +74,21 @@ export default function StoreLayout() {
               </NavLink>
             ))}
           </nav>
+
+          {/* Search: hidden on small, visible from md */}
+          <form onSubmit={submitSearch} className="hidden md:flex items-center flex-1 max-w-xs mx-auto" role="search" aria-label="Tìm kiếm sản phẩm">
+            <div className="relative w-full">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none">
+                <Icon name="MagnifyingGlass" size={16} />
+              </span>
+              <input
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Tìm sản phẩm..."
+                className="w-full pl-9 pr-3 py-2 rounded-control border border-line-strong bg-bone-50 text-ink text-sm placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-forest-500"
+              />
+            </div>
+          </form>
 
           <div className="flex items-center gap-2 shrink-0">
             <button
@@ -132,6 +157,21 @@ export default function StoreLayout() {
             </div>
           </div>
         </div>
+
+        {/* Mobile search */}
+        <form onSubmit={submitSearch} className="md:hidden px-4 pt-2" role="search" aria-label="Tìm kiếm sản phẩm">
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none">
+              <Icon name="MagnifyingGlass" size={16} />
+            </span>
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Tìm sản phẩm..."
+              className="w-full pl-9 pr-3 py-2.5 rounded-control border border-line-strong bg-bone-50 text-ink text-sm placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-forest-500"
+            />
+          </div>
+        </form>
 
         {/* Mobile nav */}
         <nav className="md:hidden flex items-center gap-1 pb-2 px-4 overflow-x-auto no-scrollbar text-sm" aria-label="Điều hướng chính (di động)">
