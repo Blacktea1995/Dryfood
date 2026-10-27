@@ -77,7 +77,7 @@ export default function Login() {
           <h1 className="display text-3xl text-ink">Đăng nhập</h1>
           <p className="text-ink-soft mt-2 text-sm">Chào mừng quay lại DryFood.</p>
 
-          <div className="bg-surface-raised rounded-card shadow-lift border border-line p-8 mt-6">
+          <div className="bg-surface-raised rounded-card shadow-lift border border-line p-6 sm:p-8 mt-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-ink mb-1.5">Email</label>

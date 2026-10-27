@@ -172,7 +172,7 @@ export default function StoreHome() {
       {/* Main shop area */}
       <section id="san-pham" aria-label="Tất cả sản phẩm">
         <div className="shop-toolbar -mx-4 px-4 py-3 space-y-2.5">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2.5">
             <div className="relative flex-1">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none">
                 <Icon name="MagnifyingGlass" size={16} />
@@ -187,12 +187,12 @@ export default function StoreHome() {
             </div>
             <label className="shrink-0 inline-flex items-center gap-1.5">
               <span className="sr-only">Sắp xếp</span>
-              <Icon name="SortAscending" size={16} className="text-ink-faint" />
+              <Icon name="SortAscending" size={16} className="text-ink-faint shrink-0" />
               <select
                 value={sort}
                 onChange={e => setSort(e.target.value)}
                 aria-label="Sắp xếp sản phẩm"
-                className="rounded-control border border-line-strong bg-surface-raised text-ink text-sm font-semibold py-2 pl-2 pr-7 focus:outline-none focus:ring-2 focus:ring-forest-500"
+                className="w-full sm:w-auto rounded-control border border-line-strong bg-surface-raised text-ink text-sm font-semibold py-2 pl-2 pr-7 focus:outline-none focus:ring-2 focus:ring-forest-500"
               >
                 {SORT_OPTIONS.map(o => (
                   <option key={o.value} value={o.value}>{o.label}</option>

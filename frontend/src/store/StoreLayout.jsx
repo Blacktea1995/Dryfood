@@ -67,10 +67,11 @@ function StoreLayoutInner() {
       {/* Top bar: utility strip */}
       <div className={`bg-forest-950 text-bone-50/80 text-xs transition-all duration-300 ${showTop ? 'max-h-10 py-2 opacity-100' : 'max-h-0 py-0 opacity-0 overflow-hidden'}`}>
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 min-w-0">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
             <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
               <Icon name="Storefront" size={13} />
-              Hệ thống cửa hàng
+              <span className="hidden sm:inline">Hệ thống cửa hàng</span>
+              <span className="sm:hidden">DryFood</span>
             </span>
             <div className="relative">
               <button
@@ -79,7 +80,8 @@ function StoreLayoutInner() {
                 aria-haspopup="listbox"
                 aria-expanded={areaOpen}
               >
-                Bạn đang ở: <b className="text-bone-50">{area}</b>
+                <span className="hidden sm:inline">Bạn đang ở: </span>
+                <b className="text-bone-50">{area}</b>
                 <Icon name="CaretDown" size={12} />
               </button>
               {areaOpen && (
@@ -109,7 +111,7 @@ function StoreLayoutInner() {
 
       {/* Main header: sticky, one line */}
       <header className="sticky top-0 z-40 bg-surface-raised border-b border-line">
-        <div className="max-w-6xl mx-auto px-4 h-[72px] flex items-center gap-3 md:gap-4">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 h-[72px] flex items-center gap-2 sm:gap-3 md:gap-4">
           <button
             onClick={() => setMobileNavOpen(true)}
             className="lg:hidden w-10 h-10 rounded-control hover:bg-bone-100 grid place-items-center text-ink-soft shrink-0"
@@ -182,10 +184,10 @@ function StoreLayoutInner() {
               ) : (
                 <button
                   onClick={() => navigate('/login', { state: { from: '/store' } })}
-                  className="inline-flex items-center gap-1.5 h-10 px-4 rounded-control bg-forest-800 hover:bg-forest-700 text-bone-50 text-sm font-bold transition-colors"
+                  className="inline-flex items-center justify-center gap-1.5 h-10 px-2 sm:px-4 rounded-control bg-forest-800 hover:bg-forest-700 text-bone-50 text-sm font-bold transition-colors"
                 >
                   <Icon name="UserCircle" size={16} />
-                  Đăng nhập
+                  <span className="hidden sm:inline">Đăng nhập</span>
                 </button>
               )}
             </div>
@@ -423,7 +425,7 @@ function StoreLayoutInner() {
 
       {/* Add-to-cart toast: sits above the floating action stack so nothing overlaps */}
       {lastAdded && (
-        <div className="fixed bottom-44 right-24 z-[60] w-80 max-w-[calc(100vw-2rem)] toast-enter" role="status" aria-live="polite">
+        <div className="fixed bottom-24 md:bottom-44 left-4 right-4 md:left-auto md:right-24 z-[60] w-auto md:w-80 max-w-[calc(100vw-2rem)] toast-enter" role="status" aria-live="polite">
           <div className="mega-panel p-4">
             <div className="flex items-start gap-3">
               <span className="grid place-items-center w-9 h-9 rounded-full bg-success-bg text-success shrink-0">

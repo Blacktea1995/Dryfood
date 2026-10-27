@@ -44,7 +44,7 @@ export default function AssistantChat() {
       {/* FAB */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="fixed bottom-5 right-5 z-50 grid place-items-center w-14 h-14 rounded-full bg-forest-800 hover:bg-forest-700 text-bone-50 shadow-pop transition-all active:scale-95"
+        className="fixed bottom-5 right-5 z-[60] grid place-items-center w-14 h-14 rounded-full bg-forest-800 hover:bg-forest-700 text-bone-50 shadow-pop transition-all active:scale-95"
         aria-label={open ? 'Đóng trợ lý DryFood' : 'Mở trợ lý DryFood'}
         aria-expanded={open}
       >
@@ -53,7 +53,7 @@ export default function AssistantChat() {
 
       {/* Panel */}
       {open && (
-        <div className="fixed bottom-20 right-5 z-50 w-[calc(100vw-2.5rem)] max-w-sm rounded-card bg-surface-raised border border-line shadow-pop overflow-hidden flex flex-col" style={{ height: 'min(560px, calc(100dvh - 7rem))' }}>
+        <div className="fixed bottom-20 right-5 z-[60] w-[calc(100vw-2.5rem)] max-w-sm rounded-card bg-surface-raised border border-line shadow-pop overflow-hidden flex flex-col" style={{ height: 'min(560px, calc(100dvh - 7rem))' }}>
           {/* Header */}
           <div className="px-4 py-3 bg-forest-900 text-bone-50 flex items-center gap-2.5">
             <span className="grid place-items-center w-9 h-9 rounded-full bg-amber-brand text-forest-950">

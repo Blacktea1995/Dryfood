@@ -52,6 +52,14 @@ export function CartProvider({ children }) {
     setLastAdded(null);
   }
 
+  // Auto-dismiss the "added to cart" toast so it never blocks the UI
+  // (especially on mobile, where a persistent toast would cover the FABs).
+  useEffect(() => {
+    if (!lastAdded) return;
+    const t = setTimeout(clearLastAdded, 3500);
+    return () => clearTimeout(t);
+  }, [lastAdded]);
+
   function updateQuantity(productId, quantity) {
     if (quantity <= 0) {
       removeItem(productId);

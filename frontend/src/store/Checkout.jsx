@@ -148,7 +148,7 @@ export default function Checkout() {
             {/* Payment method */}
             <div>
               <label className={labelClass + ' mb-2'}>Phương thức thanh toán</label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {PAYMENTS.map(pm => (
                   <button
                     type="button"
@@ -169,7 +169,7 @@ export default function Checkout() {
 
         {/* Order */}
         <div className="lg:col-span-2">
-          <div className="bg-surface-raised rounded-card border border-line p-6 space-y-4 sticky top-24">
+          <div className="bg-surface-raised rounded-card border border-line p-6 space-y-4 lg:sticky lg:top-24">
             <h2 className="font-extrabold text-ink inline-flex items-center gap-2">
               <Icon name="Package" size={18} />
               Đơn hàng ({items.length} món)

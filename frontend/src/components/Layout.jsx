@@ -118,10 +118,11 @@ export default function Layout() {
           <div className="flex items-center gap-2">
             <Link
               to="/store"
-              className="inline-flex items-center gap-1.5 h-10 px-4 rounded-control border border-line-strong text-ink text-sm font-semibold hover:border-forest-400 hover:text-forest-800 transition-colors"
+              className="inline-flex items-center gap-1.5 h-10 px-2 sm:px-4 rounded-control border border-line-strong text-ink text-sm font-semibold hover:border-forest-400 hover:text-forest-800 transition-colors"
+              aria-label="Xem cửa hàng"
             >
               <Icon name="ShoppingCartSimple" size={16} />
-              Xem cửa hàng
+              <span className="hidden sm:inline">Xem cửa hàng</span>
             </Link>
           </div>
         </header>

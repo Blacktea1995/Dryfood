@@ -283,9 +283,10 @@ export default function ProductDetail() {
         </section>
       )}
 
-      {/* Sticky add-to-cart on mobile: real commerce pattern */}
+      {/* Sticky add-to-cart on mobile: real commerce pattern.
+          z-[70] so the cart FAB / assistant FAB (z-[60]) never covers the buy button. */}
       {!out && (
-        <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-surface-raised border-t border-line px-4 py-3 flex items-center gap-3">
+        <div className="md:hidden fixed bottom-0 inset-x-0 z-[70] bg-surface-raised border-t border-line px-4 py-3 flex items-center gap-3">
           <div className="flex-1 min-w-0">
             <div className="text-xs text-ink-faint truncate">{product.name}</div>
             <div className="font-extrabold text-forest-800 tabular">{fmtVND(product.price)} ₫</div>

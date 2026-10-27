@@ -65,21 +65,21 @@ export default function HeroCarousel() {
                 else { el.style.opacity = '0.4'; }
               }}
             />
-            <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-forest-950/85 via-forest-950/40 to-transparent" />
-            <div className="relative z-10 h-full flex flex-col justify-center max-w-xl px-6 md:px-10 py-8 md:py-12 text-bone-50">
-              <h1 className="display text-2xl md:text-4xl text-bone-50 max-w-[16ch]">{s.title}</h1>
-              <p className="mt-3 text-bone-100/90 text-sm md:text-base max-w-[46ch]">{s.sub}</p>
-              <div className="mt-6 flex items-center gap-3">
+            <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-forest-950/90 via-forest-950/60 to-transparent sm:from-forest-950/85 sm:via-forest-950/40 sm:to-transparent" />
+            <div className="relative z-10 h-full flex flex-col justify-center max-w-xl px-5 md:px-10 py-8 md:py-12 text-bone-50">
+              <h1 className="display text-xl sm:text-2xl md:text-4xl text-bone-50 max-w-[16ch]">{s.title}</h1>
+              <p className="mt-2.5 sm:mt-3 text-[13px] sm:text-sm md:text-base text-bone-100/90 max-w-[46ch]">{s.sub}</p>
+              <div className="mt-5 md:mt-6 flex items-center gap-2.5 md:gap-3">
                 <Link
                   to="#san-pham"
-                  className="inline-flex items-center gap-2 rounded-control bg-amber-brand text-forest-950 font-bold text-sm px-6 py-3 transition-all hover:bg-amber-deep hover:text-white active:scale-[0.98]"
+                  className="inline-flex items-center gap-2 rounded-control bg-amber-brand text-forest-950 font-bold text-[13px] sm:text-sm px-4 sm:px-6 py-2.5 sm:py-3 transition-all hover:bg-amber-deep hover:text-white active:scale-[0.98]"
                 >
                   Mua sắm ngay
-                  <Icon name="ArrowRight" size={16} weight="bold" />
+                  <Icon name="ArrowRight" size={15} weight="bold" />
                 </Link>
                 <Link
                   to="#danh-muc"
-                  className="inline-flex items-center gap-2 rounded-control border border-bone-50/25 text-bone-50 font-semibold text-sm px-6 py-3 transition-all hover:border-bone-50/60 hover:bg-bone-50/10 active:scale-[0.98]"
+                  className="hidden sm:inline-flex items-center gap-2 rounded-control border border-bone-50/25 text-bone-50 font-semibold text-sm px-6 py-3 transition-all hover:border-bone-50/60 hover:bg-bone-50/10 active:scale-[0.98]"
                 >
                   Xem danh mục
                 </Link>
