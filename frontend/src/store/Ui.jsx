@@ -2,21 +2,25 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   ShoppingCartSimple, UserCircle, Package, MapPin, NotePencil, Tag, ArrowLeft, ArrowRight,
-  Plus, Minus, X, Star, CheckCircle, WarningCircle, Info, CaretRight, MagnifyingGlass,
+  Plus, Minus, X, Star, CheckCircle, WarningCircle, Info, CaretRight, CaretDown, MagnifyingGlass,
   Truck, ShieldCheck, Clock, Leaf, Storefront, List, Basket, Bank, TrendUp, TrendDown,
-  Users, Receipt, Percent, ChartLineUp, Export, PencilSimple, Trash, Image, ChatCircle
+  Users, Receipt, Percent, ChartLineUp, Export, PencilSimple, Trash, Image, ChatCircle,
+  House, Phone, FacebookLogo, ChatCircleDots, YoutubeLogo, ArrowUp, Play,
+  BowlFood, PiggyBank, Fish, Nut, OrangeSlice, Carrot, Pepper, Cookie, SortAscending, Funnel
 } from '@phosphor-icons/react';
 import { productImageUrl, productImageFallback, categoryImage } from './productImages.js';
 
 /* Phosphor icon set: one family, consistent stroke, one size scale */
-export { CheckCircle, WarningCircle, MagnifyingGlass, Truck, ShieldCheck, Clock, Leaf, Storefront, List, Basket, Bank, TrendUp, TrendDown, Users, Receipt, Percent, ChartLineUp, Export, PencilSimple, Trash, Image, ChatCircle };
+export { CheckCircle, WarningCircle, MagnifyingGlass, Truck, ShieldCheck, Clock, Leaf, Storefront, List, Basket, Bank, TrendUp, TrendDown, Users, Receipt, Percent, ChartLineUp, Export, PencilSimple, Trash, Image, ChatCircle, CaretDown, House, Phone, FacebookLogo, ChatCircleDots, YoutubeLogo, ArrowUp, Play, BowlFood, PiggyBank, Fish, Nut, OrangeSlice, Carrot, Pepper, Cookie, SortAscending, Funnel };
 
 export function Icon({ name, size = 18, weight = 'regular', className = '' }) {
   const Icons = {
     ShoppingCartSimple, UserCircle, Package, MapPin, NotePencil, Tag, ArrowLeft, ArrowRight,
-    Plus, Minus, X, Star, CheckCircle, WarningCircle, Info, CaretRight, MagnifyingGlass,
+    Plus, Minus, X, Star, CheckCircle, WarningCircle, Info, CaretRight, CaretDown, MagnifyingGlass,
     Truck, ShieldCheck, Clock, Leaf, Storefront, List, Basket, Bank, TrendUp, TrendDown,
-    Users, Receipt, Percent, ChartLineUp, Export, PencilSimple, Trash, Image
+    Users, Receipt, Percent, ChartLineUp, Export, PencilSimple, Trash, Image,
+    House, Phone, FacebookLogo, ChatCircleDots, YoutubeLogo, ArrowUp, Play,
+    BowlFood, PiggyBank, Fish, Nut, OrangeSlice, Carrot, Pepper, Cookie, SortAscending, Funnel
   };
   const C = Icons[name];
   if (!C) return null;
@@ -215,10 +219,16 @@ export function ProductImage({ src, product = null, name = '', className = 'w-14
 }
 
 /* Product card: the bread-and-butter of a selling storefront.
-   Image, category, name, rating, price, stock state, add-to-cart. */
+   Image, category, name, rating (only with enough reviews), price,
+   stock state, add-to-cart. Mobile shows a compact + button. */
 export function ProductCard({ product, onAdd, added = false }) {
   const out = product.stock <= 0;
-  const low = product.stock > 0 && product.stock <= 10;
+  const low = product.stock > 0 && product.stock <= 5;
+  const showRating = (product.ratingCount || 0) >= 3 && product.avgRating > 0;
+  const hasSale = product.originalPrice > product.price && product.originalPrice > 0;
+  const discountPct = hasSale
+    ? Math.round((1 - product.price / product.originalPrice) * 100)
+    : null;
 
   return (
     <article className="group relative rounded-card border border-line bg-surface-raised overflow-hidden hover:shadow-lift hover:border-line-strong transition-all flex flex-col">
@@ -236,43 +246,53 @@ export function ProductCard({ product, onAdd, added = false }) {
             </span>
           )
         )}
+        {/* Sale tag: only when real data exists, never invented */}
+        {hasSale && (
+          <span className="absolute top-2 right-2 rounded-full bg-rose-600 text-white px-2.5 py-1 text-[11px] font-bold">
+            -{discountPct}%
+          </span>
+        )}
       </Link>
 
-      <div className="p-4 flex flex-col flex-1 gap-1">
-        <div className="text-[11px] uppercase tracking-[0.12em] text-ink-faint">{product.category || 'Thực phẩm khô'}</div>
+      <div className="p-3.5 flex flex-col flex-1 gap-1">
         <Link to={`/store/product/${product.id}`} className="block">
-          <h3 className="font-bold text-ink text-sm leading-snug line-clamp-2 group-hover:text-forest-700 transition-colors">
+          <h3 className="font-bold text-ink text-[13px] leading-snug line-clamp-2 group-hover:text-forest-700 transition-colors">
             {product.name}
           </h3>
         </Link>
 
-        {product.avgRating > 0 ? (
+        {showRating ? (
           <span className="inline-flex items-center gap-1.5 text-xs text-ink-faint">
-            <Stars value={product.avgRating} size={13} />
+            <Stars value={product.avgRating} size={12} />
             <span className="tabular">{product.avgRating.toFixed(1)}</span>
+            <span className="tabular">({product.ratingCount})</span>
           </span>
         ) : (
-          <span className="text-xs text-ink-faint">Chưa có đánh giá</span>
+          <span className="text-xs text-ink-faint">{product.category || 'Thực phẩm khô'}</span>
         )}
 
-        <div className="mt-1 flex items-baseline gap-1.5">
-          <span className="text-lg font-extrabold text-forest-800 tabular">{fmtVNDLocal(product.price)}</span>
-          <span className="text-xs text-ink-faint">₫ / {product.unit}</span>
+        <div className="mt-auto pt-1.5 flex items-center gap-1.5 flex-wrap">
+          <span className="text-lg font-extrabold text-forest-800 tabular leading-none">{fmtVNDLocal(product.price)}</span>
+          <span className="text-[11px] text-ink-faint">₫ / {product.unit}</span>
+          {hasSale && (
+            <span className="text-[11px] text-ink-faint line-through tabular">{fmtVNDLocal(product.originalPrice)} ₫</span>
+          )}
         </div>
 
+        {/* Desktop: full-width labeled button. Mobile: compact + button. */}
         <button
           onClick={() => onAdd(product)}
           disabled={out}
           aria-label={out ? 'Hết hàng' : `Thêm ${product.name} vào giỏ`}
-          className={`mt-3 w-full py-2.5 rounded-control text-sm font-bold transition-all active:scale-[0.98] ${
+          className={`mt-2.5 rounded-control text-sm font-bold transition-all active:scale-[0.98] ${
             out
               ? 'bg-bone-100 text-ink-faint cursor-not-allowed'
               : added
                 ? 'bg-forest-500 text-white'
                 : 'bg-forest-800 hover:bg-forest-700 text-bone-50'
-          }`}
+          } hidden sm:inline-flex sm:items-center sm:justify-center sm:gap-1.5 sm:w-full sm:py-2.5`}
         >
-          <span className="inline-flex items-center gap-1.5 justify-center">
+          <span className="inline-flex items-center gap-1.5">
             {added ? (
               <>
                 <CheckCircle size={16} weight="bold" />
@@ -287,6 +307,24 @@ export function ProductCard({ product, onAdd, added = false }) {
               </>
             )}
           </span>
+        </button>
+        <button
+          onClick={() => onAdd(product)}
+          disabled={out}
+          aria-label={out ? 'Hết hàng' : `Thêm ${product.name} vào giỏ`}
+          className={`sm:hidden absolute top-2 right-2 w-9 h-9 rounded-full grid place-items-center transition-all active:scale-[0.95] ${
+            out
+              ? 'bg-bone-100 text-ink-faint cursor-not-allowed'
+              : added
+                ? 'bg-forest-500 text-white'
+                : 'bg-forest-800 text-bone-50'
+          }`}
+        >
+          {added ? (
+            <CheckCircle size={18} weight="bold" />
+          ) : (
+            <Plus size={18} weight="bold" />
+          )}
         </button>
       </div>
     </article>

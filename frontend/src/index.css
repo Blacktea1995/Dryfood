@@ -60,6 +60,8 @@
   --radius-card: 0.875rem;
   --radius-control: 0.625rem;
 
+  --section-gap: clamp(2.5rem, 5vw, 3.5rem);
+
   --shadow-lift: 0 10px 30px -12px rgba(24, 35, 31, 0.18);
   --shadow-pop: 0 18px 40px -16px rgba(24, 35, 31, 0.28);
 
@@ -140,3 +142,73 @@ body {
 
 /* Utility: hairline top divider for grouped rows (sparse, not per-row border-b everywhere) */
 .hairline { border-top: 1px solid var(--color-line); }
+
+/* ============================================================
+   Storefront chrome: mega menu, carousel, floating, toast
+   Same world tokens; presentation-only utilities.
+   ============================================================ */
+
+/* Carousel dots: semantic, single accent, no decorative color noise */
+.carousel-dot {
+  width: 8px; height: 8px; border-radius: 999px;
+  background: var(--color-bone-300);
+  transition: width 0.3s var(--ease-out-exp), background 0.3s var(--ease-out-exp);
+}
+.carousel-dot.is-active {
+  width: 22px; background: var(--color-amber-brand);
+}
+
+/* Mega menu panel: lifted surface, tinted shadow, hairline border */
+.mega-panel {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-pop);
+}
+
+/* Floating action: raised control, tactile press */
+.fab {
+  box-shadow: var(--shadow-pop);
+  transition: transform 0.3s var(--ease-out-exp), box-shadow 0.3s var(--ease-out-exp);
+}
+.fab:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+.fab:active { transform: scale(0.96); }
+
+/* Toast: enter from bottom, single authored motion */
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.toast-enter { animation: toast-in 0.35s var(--ease-out-exp) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-dot { transition: none; }
+  .fab, .toast-enter { animation: none; transform: none; }
+}
+
+/* Horizontal scroll-snap rail: keyboard reachable, no page-level overflow */
+.snap-row {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding-bottom: 0.25rem;
+  -webkit-overflow-scrolling: touch;
+}
+.snap-row::-webkit-scrollbar { display: none; }
+.snap-row { scrollbar-width: none; }
+.snap-item { scroll-snap-align: start; flex: 0 0 auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .snap-row { scroll-behavior: auto; }
+}
+
+/* Sticky shop toolbar sits right under the 72px storefront header */
+.shop-toolbar {
+  position: sticky;
+  top: 72px;
+  z-index: 20;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-line);
+}
