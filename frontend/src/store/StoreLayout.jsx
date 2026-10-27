@@ -6,6 +6,8 @@ import CartDrawer from './CartDrawer.jsx';
 import AssistantChat from './AssistantChat.jsx';
 import { BrandMark, Icon, Storefront, CheckCircle } from './Ui.jsx';
 import { TOP_CATEGORIES, CATEGORY_GROUPS, CATEGORY_GROUPS_3 } from './categories.js';
+import { FOOTER_COLS } from './footerContent.js';
+import { InfoModalProvider, useInfoModal } from './InfoModal.jsx';
 
 const NAV = [
   { to: '/store', end: true, label: 'Sản phẩm' },
@@ -15,24 +17,10 @@ const NAV = [
 
 const AREAS = ['Hà Nội', 'Hồ Chí Minh', 'Đà Nẵng'];
 
-const FOOTER_COLS = [
-  {
-    title: 'Về DryFood',
-    links: ['Câu chuyện của chúng tôi', 'Hệ thống cửa hàng', 'Tuyển dụng', 'Liên hệ']
-  },
-  {
-    title: 'Hỗ trợ khách hàng',
-    links: ['Trung tâm trợ giúp', 'Theo dõi đơn hàng', 'Hướng dẫn mua hàng', 'Câu hỏi thường gặp']
-  },
-  {
-    title: 'Chính sách',
-    links: ['Chính sách bảo mật', 'Chính sách đổi trả', 'Chính sách vận chuyển', 'Điều khoản sử dụng']
-  }
-];
-
-export default function StoreLayout() {
+function StoreLayoutInner() {
   const { user, logout, isAuthenticated } = useAuth();
   const { count, lastAdded, clearLastAdded } = useCart();
+  const { open: openInfo } = useInfoModal();
   const navigate = useNavigate();
   const [cartOpen, setCartOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -397,10 +385,14 @@ export default function StoreLayout() {
               <h3 className="text-sm font-bold text-bone-50 mb-3">{col.title}</h3>
               <ul className="space-y-2">
                 {col.links.map(l => (
-                  <li key={l}>
-                    <a href="#" onClick={e => e.preventDefault()} className="text-sm text-bone-50/60 hover:text-bone-50 transition-colors">
-                      {l}
-                    </a>
+                  <li key={l.slug}>
+                    <button
+                      type="button"
+                      onClick={e => openInfo(l.slug, e.currentTarget)}
+                      className="text-sm text-bone-50/60 hover:text-bone-50 transition-colors text-left"
+                    >
+                      {l.label}
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -506,5 +498,14 @@ function FloatingButtons() {
       </a>
       <div ref={sentinelRef} className="h-px w-px" aria-hidden="true" />
     </div>
+  );
+}
+
+/* Provider wrapper: makes footer info modals available across the store. */
+export default function StoreLayout() {
+  return (
+    <InfoModalProvider>
+      <StoreLayoutInner />
+    </InfoModalProvider>
   );
 }
